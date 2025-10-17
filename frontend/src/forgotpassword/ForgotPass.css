@@ -1,0 +1,99 @@
+.forgot-password-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(60,90,120,0.06), 0 1.5px 5px rgba(60,90,120,0.10);
+  max-width: 410px;
+  margin: 60px auto;
+  padding: 40px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.forgot-password-title {
+  font-size: 23px;
+  color: #1c76fd;
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  color: #163e72;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  width: 100%;
+  padding: 9px 13px;
+  border-radius: 6px;
+  border: 1px solid #cfd3e1;
+  font-size: 15px;
+  background: #f7fafd;
+  box-sizing: border-box;
+  transition: border-color .2s;
+}
+
+input:focus {
+  border-color: #1c76fd;
+  outline: none;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.send-otp-btn,
+.verify-otp-btn,
+.reset-password-btn {
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background 0.15s;
+  background: #1c76fd;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.send-otp-btn:disabled,
+.verify-otp-btn:disabled,
+.reset-password-btn:disabled {
+  background: #a5c7e9;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+.email-otp-group {
+  display: flex;
+  gap: 10px; /* Space between email input and button */
+  align-items: center;
+}
+
+.email-otp-group input {
+  flex-grow: 1; /* Allow email input to take available space */
+  margin-bottom: 0; /* Remove bottom margin as it's in a flex container */
+}
+
+.send-otp-btn {
+  flex-shrink: 0; /* Prevent button from shrinking */
+  margin-bottom: 0; /* Remove bottom margin */
+}

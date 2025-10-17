@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Conduct Certificate Application</title>
+  <style>
+    body {
+      background: #f7f7f7;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .certificate-form-container {
+      background: #fff;
+      max-width: 480px;
+      margin: 30px auto;
+      padding: 32px 28px 24px 28px;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(44, 106, 243, 0.10);
+      border: 1px solid #d7e5fc;
+    }
+
+    .certificate-form-container h1 {
+      text-align: center;
+      font-size: 1.7em;
+      color: #2051a7;
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+
+    .form-row {
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .form-row label {
+      width: 190px;
+      color: #2051a7;
+      font-weight: 500;
+      margin-right: 8px;
+    }
+
+    .form-row input, .form-row select {
+      flex: 1;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #b2c5e4;
+      font-size: 1em;
+    }
+
+    #submitBtn {
+      background: #2051a7;
+      color: #fff;
+      font-size: 1.1em;
+      padding: 12px 0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: background 0.2s;
+    }
+
+    #submitBtn:hover {
+      background: #184094;
+    }
+
+    .result {
+      margin-top: 28px;
+      background: #eaf5ff;
+      color: #17408e;
+      border-radius: 5px;
+      padding: 13px 10px;
+      font-size: 1.05em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="certificate-form-container">
+    <h1>Conduct Certificate Application</h1>
+    <form id="conductCertificateForm">
+      <div class="form-row">
+        <label>Full Name of Student:</label>
+        <input type="text" id="studentName" name="studentName" required />
+      </div>
+      <div class="form-row">
+        <label>S/o./D/o. Sri/Smt.:</label>
+        <input type="text" id="parentName" name="parentName" required />
+      </div>
+      <div class="form-row">
+        <label>Course:</label>
+        <input type="text" id="course" name="course" value="B.Tech" readonly />
+      </div>
+      <div class="form-row">
+        <label>Branch:</label>
+        <select id="branch" name="branch" required>
+          <option value="CSE">CSE</option>
+          <option value="ECE">ECE</option>
+          <option value="EEE">EEE</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>From Year:</label>
+        <input type="number" id="fromYear" name="fromYear" min="1900" max="2099" required />
+        <label style="margin-left:1em;">To Year:</label>
+        <input type="number" id="toYear" name="toYear" min="1900" max="2099" required />
+      </div>
+      <div class="form-row">
+        <label>Is Student currently enrolled?</label>
+        <select id="isCurrent" name="isCurrent">
+          <option value="is a student of">is</option>
+          <option value="was a student of">was</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <button type="submit" id="submitBtn">Apply for Certificate</button>
+      </div>
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    document.getElementById("conductCertificateForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const studentName = document.getElementById("studentName").value;
+      const parentName = document.getElementById("parentName").value;
+      const course = document.getElementById("course").value;
+      const branch = document.getElementById("branch").value;
+      const fromYear = document.getElementById("fromYear").value;
+      const toYear = document.getElementById("toYear").value;
+      const isCurrent = document.getElementById("isCurrent").value;
+
+      // Format a preview of certificate text
+      const resultText = `
+        <strong>This is to certify that Mr./Ms. ${studentName},</strong><br/>
+        S/o./D/o. Sri/Smt. ${parentName},<br/>
+        ${isCurrent} ${course} (${branch}) Course<br/>
+        during ${fromYear} - ${toYear} and that he/she bears good conduct.<br/><br/>
+        <em>Your application is submitted for review.</em>
+      `;
+      document.getElementById("result").innerHTML = resultText;
+    });
+  </script>
+</body>
+</html>

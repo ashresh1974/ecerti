@@ -1,0 +1,135 @@
+/* OTP Button Styles */
+.otp-send-btn {
+  border: none;
+  padding: 7px 15px;
+  font-size: 15px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background 0.15s;
+  background: #1c76fd;
+  color: #fff;
+}
+.otp-send-btn:disabled {
+  background: #a5c7e9;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+/* Error Text Styles */
+.error-text {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+/* Add these to make all inputs and labels left-aligned, as previously discussed */
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.login-container label {
+  text-align: left;
+  width: 100%;
+  margin: 8px 0 2px 0;
+  font-weight: 500;
+}
+
+.login-container input,
+.password-field input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.password-field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.error-message,
+.success-message {
+  text-align: left;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* Proceed Button Styles */
+.proceed-btn {
+  width: 100%;
+  padding: 12px 0;
+  margin-top: 16px;
+  background: linear-gradient(90deg, #1c76fd 0%, #4897fc 100%);
+  color: #fff;
+  font-size: 1.1em;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(44, 106, 243, 0.09);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+}
+
+.proceed-btn:hover:not(:disabled) {
+  background: linear-gradient(90deg, #1662c4 0%, #377ad3 100%);
+  transform: translateY(-1px) scale(1.02);
+}
+
+.proceed-btn:disabled {
+  background: #a5c7e9;
+  color: #fff;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.8;
+}
+
+/* Dropdown (Course/Branch) Styles */
+.login-container select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  text-align: left;
+  font-size: 1em;
+  background: #f8faff;
+  color: #333;
+  appearance: none; /* Remove default arrow for consistency, add custom if desired */
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+/* Highlight dropdown on focus */
+.login-container select:focus {
+  border-color: #1c76fd;
+}
+
+/* Ensure label spacing for dropdowns matches other inputs */
+.login-container label {
+  text-align: left;
+  width: 100%;
+  margin: 8px 0 2px 0;
+  font-weight: 500;
+}
+
+.flex-row {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+}
+.flex-half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
