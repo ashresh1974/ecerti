@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # e-Certificate Management System
 
 This project is an e-certificate management system for an engineering college. It consists of a React.js frontend and a Node.js backend with a MySQL database.
@@ -68,3 +69,7 @@ Feel free to contribute to this project. Please follow standard GitHub flow for 
 ## License
 
 [Specify your license here, e.g., MIT License]
+=======
+# ecertificate
+ecertificate management 
+>>>>>>> 0dd2674838f46b9e5fcb921f417fdad579173de3
