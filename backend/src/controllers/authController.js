@@ -4,9 +4,11 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
 exports.register = async (req, res) => {
-  const { fullName, roll, course, branch, mobile, email, username, password } = req.body;
+  const { fullName, roll, course, branch, gender, mobile, email, username, password } = req.body;
 
-  if (!fullName || !roll || !course || !branch || !mobile || !email || !username || !password) {
+  console.log('Registering user with data:', req.body);
+
+  if (!fullName || !roll || !course || !branch || !gender || !mobile || !email || !username || !password) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
@@ -23,8 +25,10 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const insertUserSql = 'INSERT INTO users (full_name, roll_number, course, branch, phone_number, email_id, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    await db.query(insertUserSql, [fullName, roll, course, branch, mobile, email, username, hashedPassword]);
+    const insertUserSql = 'INSERT INTO users (full_name, roll_number, course, branch, gender, phone_number, email_id, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const insertValues = [fullName, roll, course, branch, gender, mobile, email, username, hashedPassword];
+    console.log('Executing SQL:', insertUserSql, 'with values:', insertValues);
+    await db.query(insertUserSql, insertValues);
 
     res.status(201).json({ message: 'Registration successful!' });
   } catch (error) {
@@ -97,6 +101,14 @@ exports.login = async (req, res) => {
 
     if (!isMatch) return res.status(401).json({ message: 'Invalid email or password.' });
 
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      email: user.email_id,
+      role: user.role,
+    };
+    console.log('User logged in. Session user:', req.session.user);
+
     res.status(200).json({
       message: 'Login successful!',
       user: {
@@ -109,6 +121,7 @@ exports.login = async (req, res) => {
         phone: user.phone_number,
         course: user.course,
         branch: user.branch,
+        gender: user.gender || '',
       },
     });
   } catch (error) {
@@ -179,9 +192,21 @@ exports.resetPassword = async (req, res) => {
     await db.query('UPDATE users SET password = ? WHERE email_id = ?', [hashedPassword, email]);
     await db.query('DELETE FROM otps WHERE email = ?', [email]);
 
-    res.status(200).json({ message: 'Password reset successfully!' });
+    res.status(200).json({ message: 'Password reset successfully.' });
   } catch (error) {
     console.error('Error resetting password:', error);
     res.status(500).json({ message: 'Server error during password reset.' });
   }
 };
+
+exports.logout = (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      return res.status(500).json({ message: 'Could not log out, please try again.' });
+    }
+    res.status(200).json({ message: 'Logged out successfully.' });
+  });
+};
+
+

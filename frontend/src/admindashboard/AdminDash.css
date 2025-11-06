@@ -1,3 +1,23 @@
+.dashboard .requested-certificates input[type="text"],
+.dashboard .requested-certificates select {
+  margin-right: 8px;
+  font-size: 1em;
+}
+.more-btn {
+  padding: 7px 18px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: #2051a7;
+  color: #fff;
+  transition: background 0.15s;
+  margin-left: 4px;
+}
+.more-btn:hover {
+  background: #17449c;
+}
 .admin-container {
   display: flex;
   min-height: 100vh;
@@ -11,6 +31,11 @@
   color: #fff;
   padding: 28px 0 0 0;
   border-right: 1px solid #e0eafc;
+  position: fixed; /* Make the sidebar fixed */
+  height: 100vh; /* Occupy full viewport height */
+  top: 0;
+  left: 0;
+  overflow-y: auto; /* Enable scrolling for menu items if they exceed height */
 }
 
 .menu-title {
@@ -54,6 +79,7 @@
 .admin-main {
   flex: 1;
   padding: 38px 48px;
+  margin-left: 220px; /* Add margin to main content to offset fixed sidebar */
 }
 
 .stats-row {
@@ -149,3 +175,72 @@ tr:last-child td {
 tbody tr:hover {
   background: #f5f9fe;
 }
+
+/* Styles for StudentDetails.jsx */
+.student-details-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(44, 106, 243, 0.07);
+}
+
+.student-details-container h2 {
+  font-size: 1.8em;
+  color: #2051a7;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.details-card {
+  background: #ebf1fe;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border: 1px solid #e1eaff;
+}
+
+.details-card p {
+  font-size: 1.1em;
+  margin-bottom: 12px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.details-card p strong {
+  color: #2051a7;
+  display: inline-block;
+  width: 150px; /* Align labels */
+}
+
+.back-button {
+  display: block;
+  width: 250px;
+  padding: 12px 20px;
+  margin: 20px auto 0 auto;
+  background-color: #2051a7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #173c83;
+}
+
+.loading, .error, .no-data {
+  text-align: center;
+  font-size: 1.2em;
+  color: #555;
+  padding: 30px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(44, 106, 243, 0.07);
+}
+
+.error {
+  color: #d22c2c;
+}
+

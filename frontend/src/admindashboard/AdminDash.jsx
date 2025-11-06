@@ -1,124 +1,145 @@
-import React, { useState } from 'react';
-import './AdminDash.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./AdminDash.css";
+import axios from "axios";
+import CertificateRequests from "./CertificateRequests";
+import IssuedCertificates from "./IssuedCertificates";
+import StudentManagement from "./StudentManagement";
 
-function AdminDash() {
-  const [activeMenu, setActiveMenu] = useState('dashboard');
+const MENU_ITEMS = [
+  "Dashboard",
+  "Certificate Requests",
+  "Issued Certificates",
+  "Student Management",
+];
 
-  // Example dummy data for dashboard boxes:
-  const certificateStats = {
-    total: 200,
-    issued: 130,
-    pending: 50,
-    rejected: 20,
-  };
-  // Example dummy data for recent activities:
-  const activities = [
-    "Issued Conduct Certificate to Ramesh.",
-    "Rejected Provisional Certificate for Suresh.",
-    "Student Geeta requested a Conduct Certificate.",
-    "Updated email for student Arun.",
-    "Issued Provisional Certificate to Swapna."
-  ];
-  // Example dummy data for requested certificates:
-  const requests = [
-    { name: "Rahul", type: "Conduct Certificate", date: "2025-10-13", status: "Pending" },
-    { name: "Priya", type: "Provisional Certificate", date: "2025-10-14", status: "Pending" }
-  ];
-  // Example dummy students:
-  const students = [
-    { name: "Ravi", roll: "123456789012", email: "ravi@mail.com", branch: "CSE" },
-    { name: "Priya", roll: "123456789011", email: "priya@mail.com", branch: "ECE" }
-  ];
+export default function AdminDashboard() {
+  const [activeMenu, setActiveMenu] = useState("Dashboard");
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    verified: 0,
+    rejected: 0,
+  });
+  const [activityData, setActivityData] = useState([]);
+  const navigate = useNavigate();
 
-  const handleMenuClick = (menu) => setActiveMenu(menu);
+  useEffect(() => {
+    // Fetch certificate stats
+    axios.get("http://localhost:5000/api/certificate/stats", { withCredentials: true })
+      .then(res => setStats(res.data))
+      .catch(() => {});
 
-  const handleLogout = () => {
-    // Clear session, redirect, etc.
-    window.location.href = '/login';
+    // Fetch recent activity (last 5-10 records)
+    axios.get("http://localhost:5000/api/certificate/recent", { withCredentials: true })
+      .then(res => setActivityData(res.data))
+      .catch(() => {});
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Even if logout fails on server, clear local storage and redirect for UX
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      navigate("/login");
+    }
   };
 
   return (
     <div className="admin-container">
-      <aside className="admin-menu">
-        <h2 className="menu-title">Admin Menu</h2>
+      {/* Sidebar */}
+      <div className="admin-menu">
+        <div className="menu-title">Admin Dashboard</div>
         <ul>
-          <li className={activeMenu === "dashboard" ? "active" : ""} onClick={() => handleMenuClick("dashboard")}>Dashboard</li>
-          <li className={activeMenu === "requested" ? "active" : ""} onClick={() => handleMenuClick("requested")}>Requested Certificates</li>
-          <li className={activeMenu === "students" ? "active" : ""} onClick={() => handleMenuClick("students")}>Manage Students</li>
+          {MENU_ITEMS.map((item) => (
+            <li
+              key={item}
+              className={activeMenu === item ? "active" : ""}
+              onClick={() => setActiveMenu(item)}
+            >
+              {item}
+            </li>
+          ))}
           <li className="logout" onClick={handleLogout}>Logout</li>
         </ul>
-      </aside>
-      <main className="admin-main">
-        {activeMenu === "dashboard" && (
-          <section className="dashboard">
+      </div>
+
+      {/* Main Dashboard Area */}
+      <div className="admin-main">
+        {activeMenu === "Dashboard" && (
+          <div className="dashboard">
             <h1>Dashboard</h1>
+            {/* Stats Row */}
             <div className="stats-row">
-              <div className="stat-box total">Total Certificates <span>{certificateStats.total}</span></div>
-              <div className="stat-box issued">Issued <span>{certificateStats.issued}</span></div>
-              <div className="stat-box pending">Pending <span>{certificateStats.pending}</span></div>
-              <div className="stat-box rejected">Rejected <span>{certificateStats.rejected}</span></div>
+              <div className="stat-box">
+                Total Certificates
+                <span>{stats.total}</span>
+              </div>
+              <div className="stat-box pending">
+                Pending Requests
+                <span>{stats.pending}</span>
+              </div>
+              <div className="stat-box issued">
+                Verified Certificates
+                <span>{stats.verified}</span>
+              </div>
+              <div className="stat-box rejected">
+                Rejected Requests
+                <span>{stats.rejected}</span>
+              </div>
             </div>
+
+            {/* Recent Activity Table */}
             <div className="recent-activity">
-              <h2>Recent Activities</h2>
-              <ul>
-                {activities.map((act, idx) => <li key={idx}>{act}</li>)}
-              </ul>
+              <h2>Recent Activity</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th>Date</th>
+                    <th>Roll Number</th>
+                    <th>Name</th>
+                    <th>Certificate</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activityData.length > 0 ? (
+                    activityData.map((row, idx) => (
+                      <tr key={row.serial_num || idx}>
+                        <td>{idx + 1}</td>
+                        <td>{new Date(row.requested_date).toLocaleDateString()}</td>
+                        <td>{row.roll_number}</td>
+                        <td>{row.student_name}</td>
+                        <td>{row.certificate_type}</td>
+                        <td>{row.status}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6} style={{ textAlign: 'center', color: '#ccc' }}>
+                        No activity found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-          </section>
+          </div>
         )}
-        {activeMenu === "requested" && (
-          <section className="requested-certificates">
-            <h1>Requested Certificates</h1>
-            <table>
-              <thead>
-                <tr>
-                  <th>Student Name</th>
-                  <th>Certificate Type</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {requests.map((req, idx) =>
-                  <tr key={idx}>
-                    <td>{req.name}</td>
-                    <td>{req.type}</td>
-                    <td>{req.date}</td>
-                    <td>{req.status}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </section>
-        )}
-        {activeMenu === "students" && (
-          <section className="student-list">
-            <h1>Manage Students</h1>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Roll</th>
-                  <th>Email</th>
-                  <th>Branch</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((stu, idx) =>
-                  <tr key={idx}>
-                    <td>{stu.name}</td>
-                    <td>{stu.roll}</td>
-                    <td>{stu.email}</td>
-                    <td>{stu.branch}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </section>
-        )}
-      </main>
+        {activeMenu === "Certificate Requests" && <CertificateRequests />}
+  {/* Request Details removed */}
+        {activeMenu === "Issued Certificates" && <IssuedCertificates />}
+  {/* Certificate Templates and QR Verification Logs removed */}
+        {activeMenu === "Student Management" && <StudentManagement />}
+      </div>
     </div>
   );
 }
-
-export default AdminDash;

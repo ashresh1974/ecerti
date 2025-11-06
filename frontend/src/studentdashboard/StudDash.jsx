@@ -1,189 +1,95 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, Outlet } from 'react-router-dom';
+import useSessionTimeout from '../hooks/useSessionTimeout';
 import './StudDash.css';
 
 function StudDash() {
+  useSessionTimeout(30 * 60 * 1000);
   const [profile, setProfile] = useState({});
-  const [editMode, setEditMode] = useState(false);
-  const [editedProfile, setEditedProfile] = useState({});
-  const [activeMenu, setActiveMenu] = useState('profile');
   const navigate = useNavigate();
 
   useEffect(() => {
-    // FIXED: Get user data from localStorage (set during login)
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login', { replace: true });
+      return;
+    }
+
+    const preventBack = () => {
+      window.history.pushState(null, '', window.location.href);
+    };
+    preventBack();
+    window.addEventListener('popstate', preventBack);
+
+    return () => {
+      window.removeEventListener('popstate', preventBack);
+    };
+  }, [navigate]);
+
+  useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
-      const user = JSON.parse(userData);
-      const userProfile = {
-        fullName: user.name || '',
-        username: user.username || '',
-        roll: user.roll || '',
-        email: user.email || '',
-      };
-      setProfile(userProfile);
-      setEditedProfile(userProfile);
+      setProfile(JSON.parse(userData));
     } else {
-      // Redirect to login if no user data
-      navigate('/');
+      navigate('/login');
     }
   }, [navigate]);
 
-  const handleEdit = () => {
-    setEditMode(true);
-    setEditedProfile(profile);
-  };
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
 
-  const handleChange = (e) => {
-    setEditedProfile({ ...editedProfile, [e.target.name]: e.target.value });
-  };
+      if (!token || !userId) {
+        navigate('/login', { replace: true });
+        return;
+      }
 
-  const handleSave = () => {
-    setProfile(editedProfile);
-    setEditMode(false);
-    // TODO: Add API call to update profile in backend
-  };
+      try {
+        const response = await fetch(`http://localhost:5000/api/user/details?id=${userId}`, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-  const handleCancel = () => {
-    setEditedProfile(profile);
-    setEditMode(false);
-  };
+        if (response.ok) {
+          const data = await response.json();
+          setProfile(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        } else {
+          navigate('/login', { replace: true });
+        }
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+        navigate('/login', { replace: true });
+      }
+    };
 
-  const handleMenuClick = (menuItem) => {
-    setActiveMenu(menuItem);
-  };
+    fetchUserDetails();
+  }, [navigate, setProfile]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/');
-  };
-
-  const renderContent = () => {
-    switch (activeMenu) {
-      case 'profile':
-        return (
-          <div className="profile-card">
-            <form>
-              <div className="profile-field">
-                <label>Full Name:</label>
-                {editMode ? (
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={editedProfile.fullName}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  <span>{profile.fullName}</span>
-                )}
-              </div>
-              <div className="profile-field">
-                <label>Username:</label>
-                {editMode ? (
-                  <input
-                    type="text"
-                    name="username"
-                    value={editedProfile.username}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  <span>{profile.username}</span>
-                )}
-              </div>
-              <div className="profile-field">
-                <label>Roll Number:</label>
-                {editMode ? (
-                  <input
-                    type="text"
-                    name="roll"
-                    value={editedProfile.roll}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  <span>{profile.roll}</span>
-                )}
-              </div>
-              <div className="profile-field">
-                <label>Email ID:</label>
-                {editMode ? (
-                  <input
-                    type="email"
-                    name="email"
-                    value={editedProfile.email}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  <span>{profile.email}</span>
-                )}
-              </div>
-              <div className="profile-actions">
-                {editMode ? (
-                  <>
-                    <button type="button" className="save-btn" onClick={handleSave}>Save</button>
-                    <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
-                  </>
-                ) : (
-                  <button type="button" className="edit-btn" onClick={handleEdit}>Edit Profile</button>
-                )}
-              </div>
-            </form>
-          </div>
-        );
-      case 'apply':
-        return <div className="content-section">Apply Certificate - Coming Soon</div>;
-      case 'status':
-        return <div className="content-section">Certificate Status - Coming Soon</div>;
-      case 'download':
-        return <div className="content-section">Download Certificates - Coming Soon</div>;
-      default:
-        return <div className="content-section">Select a menu item</div>;
-    }
+    localStorage.clear();
+    window.location.href = '/login';
   };
 
   return (
-    <div className="stud-dashboard-bg">
-      <div className="stud-dashboard-container">
-        <div className="stud-dashboard-menu">
-          <h2 className="menu-title">Menu</h2>
-          <ul className="menu-list">
-            <li 
-              className={`menu-item ${activeMenu === 'profile' ? 'active' : ''}`}
-              onClick={() => handleMenuClick('profile')}
-            >
-              Profile
-            </li>
-            <li 
-              className={`menu-item ${activeMenu === 'apply' ? 'active' : ''}`}
-              onClick={() => handleMenuClick('apply')}
-            >
-              Apply Certificate
-            </li>
-            <li 
-              className={`menu-item ${activeMenu === 'status' ? 'active' : ''}`}
-              onClick={() => handleMenuClick('status')}
-            >
-              Certificate Status
-            </li>
-            <li 
-              className={`menu-item ${activeMenu === 'download' ? 'active' : ''}`}
-              onClick={() => handleMenuClick('download')}
-            >
-              Download Certificates
-            </li>
-            <li className="menu-item logout" onClick={handleLogout}>
-              Logout
-            </li>
-          </ul>
-        </div>
-        <div className="stud-dashboard-content">
-          <h2 className="content-title">
-            {activeMenu === 'profile' && 'Student Profile'}
-            {activeMenu === 'apply' && 'Apply Certificate'}
-            {activeMenu === 'status' && 'Certificate Status'}
-            {activeMenu === 'download' && 'Download Certificates'}
-          </h2>
-          {renderContent()}
-        </div>
-      </div>
+    <div className="admin-container">
+      <aside className="admin-menu">
+        <h2 className="menu-title">Student Menu</h2>
+        <ul>
+          <li><Link to="/studentdashboard">Profile</Link></li>
+          <li><Link to="/studentdashboard/apply-certificate">Apply Certificate</Link></li>
+          <li><Link to="/studentdashboard/certificate-status">Certificate Status</Link></li>
+          <li><Link to="/studentdashboard/download-certificates">Download Certificates</Link></li>
+          <li className="logout" onClick={handleLogout}>Logout</li>
+        </ul>
+      </aside>
+
+      <main className="admin-main">
+        <Outlet context={{ profile, setProfile }} />
+      </main>
     </div>
   );
 }

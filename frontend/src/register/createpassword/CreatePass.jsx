@@ -15,6 +15,7 @@ function CreatePass() {
   const [roll, setRoll] = useState('');
   const [course, setCourse] = useState('');
   const [branch, setBranch] = useState('');
+  const [gender, setGender] = useState('');
   const [mobile, setMobile] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ function CreatePass() {
       setRoll(location.state.roll || '');
       setCourse(location.state.course || '');
       setBranch(location.state.branch || '');
+      setGender(location.state.gender || '');
       setMobile(location.state.mobile || '');
       setEmail(location.state.email || '');
       setUsername(location.state.username || location.state.email || '');
@@ -61,6 +63,7 @@ function CreatePass() {
         roll,
         course,
         branch,
+        gender,
         mobile,
         email,
         username,

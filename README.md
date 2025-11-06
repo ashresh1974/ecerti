@@ -1,7 +1,7 @@
 <<<<<<< HEAD
 # e-Certificate Management System
 
-This project is an e-certificate management system for an engineering college. It consists of a React.js frontend and a Node.js backend with a MySQL database.
+This project is an e-certificate management system. It consists of a React.js frontend and a Node.js backend with a MySQL database.
 
 ## Project Structure
 
@@ -26,7 +26,7 @@ This project is an e-certificate management system for an engineering college. I
    ```bash
    npm install
    ```
-3. Create a MySQL database named `ecertificate_db`.
+3. Create a MySQL database named `ecertificate`.
 4. Update the database connection details in `backend/src/db.js` and `backend/src/server.js` if necessary.
 5. Start the backend server:
    ```bash

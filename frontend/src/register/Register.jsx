@@ -7,6 +7,7 @@ export default function Register() {
   const [roll, setRoll] = useState("");
   const [course, setCourse] = useState("");
   const [branch, setBranch] = useState("");
+  const [gender, setGender] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -99,6 +100,11 @@ export default function Register() {
       setFullNameError("Full Name is required.");
       isValid = false;
     }
+    if (!gender) {
+      // You might want to add an error state for gender as well
+      setMsg("Please select a gender.");
+      isValid = false;
+    }
     if (!roll) {
       setRollError("Roll Number is required.");
       isValid = false;
@@ -131,7 +137,7 @@ export default function Register() {
 
     // username and password will be set in createpassword, so pass the rest
     navigate('/createpassword', {
-      state: { fullName, roll, course, branch, mobile, email }
+      state: { fullName, roll, course, branch, gender, mobile, email }
     });
   };
 
@@ -154,6 +160,38 @@ export default function Register() {
             required
           />
           {fullNameError && <div className="error-text">{fullNameError}</div>}
+
+          <label>Gender</label>
+          <div className="gender-options">
+            <label>
+              <input
+                type="radio"
+                value="Male"
+                checked={gender === "Male"}
+                onChange={(e) => setGender(e.target.value)}
+              />
+              Male
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="Female"
+                checked={gender === "Female"}
+                onChange={(e) => setGender(e.target.value)}
+              />
+              Female
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="Other"
+                checked={gender === "Other"}
+                onChange={(e) => setGender(e.target.value)}
+              />
+              Other
+            </label>
+          </div>
+
 
           <label>Roll Number</label>
           <input
