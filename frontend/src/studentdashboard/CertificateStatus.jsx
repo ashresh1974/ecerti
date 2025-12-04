@@ -12,10 +12,10 @@ function CertificateStatus() {
 
   const fetchCertificates = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/certificates/student', {
+      const response = await fetch('http://localhost:5000/api/certificate/student', {
+        method: 'GET',
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });

@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './index.css';
-import App from './App';
 import ProtectedRouteAdmin from './components/ProtectedRouteAdmin';
 import ProtectedRouteStudent from './components/ProtectedRouteStudent';
 import Login from './login/Login';
@@ -18,6 +17,7 @@ import ApplyCertificate from './studentdashboard/ApplyCertificate';
 import CertificateStatus from './studentdashboard/CertificateStatus';
 import DownloadCertificates from './studentdashboard/DownloadCertificates';
 import StudentDetails from './admindashboard/StudentDetails';
+import RequestDetails from './admindashboard/RequestDetails';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -47,6 +47,22 @@ root.render(
           element={
             <ProtectedRouteAdmin>
               <StudentDetails />
+            </ProtectedRouteAdmin>
+          }
+        />
+        <Route
+          path="/admin/request/:reference_num"
+          element={
+            <ProtectedRouteAdmin>
+              <RequestDetails />
+            </ProtectedRouteAdmin>
+          }
+        />
+        <Route
+          path="/admin/certificate-requests"
+          element={
+            <ProtectedRouteAdmin>
+              <AdminDash />
             </ProtectedRouteAdmin>
           }
         />

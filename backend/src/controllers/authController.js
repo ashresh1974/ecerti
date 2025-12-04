@@ -105,6 +105,7 @@ exports.login = async (req, res) => {
       id: user.id,
       username: user.username,
       email: user.email_id,
+      roll_number: user.roll_number,
       role: user.role,
     };
     console.log('User logged in. Session user:', req.session.user);
@@ -115,10 +116,10 @@ exports.login = async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email_id,
-        name: user.full_name,
+        full_name: user.full_name,
         role: user.role,
-        roll: user.roll_number,
-        phone: user.phone_number,
+        roll_number: user.roll_number,
+        phone_number: user.phone_number,
         course: user.course,
         branch: user.branch,
         gender: user.gender || '',

@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import "./AdminDash.css";
 import axios from "axios";
 import CertificateRequests from "./CertificateRequests";
 import IssuedCertificates from "./IssuedCertificates";
 import StudentManagement from "./StudentManagement";
+import CertificateTemplates from "./CertificateTemplates";
 
 const MENU_ITEMS = [
   "Dashboard",
   "Certificate Requests",
   "Issued Certificates",
+  "Certificate Templates",
   "Student Management",
 ];
 
@@ -23,6 +26,7 @@ export default function AdminDashboard() {
   });
   const [activityData, setActivityData] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Fetch certificate stats
@@ -35,6 +39,21 @@ export default function AdminDashboard() {
       .then(res => setActivityData(res.data))
       .catch(() => {});
   }, []);
+
+  // Set active menu based on current URL (so direct routes can open specific tab)
+  useEffect(() => {
+    if (location.pathname.includes('certificate-requests')) {
+      setActiveMenu('Certificate Requests');
+    } else if (location.pathname.includes('issued')) {
+      setActiveMenu('Issued Certificates');
+    } else if (location.pathname.includes('templates')) {
+      setActiveMenu('Certificate Templates');
+    } else if (location.pathname.includes('student-details')) {
+      setActiveMenu('Student Management');
+    } else if (location.pathname === '/admin' || location.pathname === '/admin/') {
+      setActiveMenu('Dashboard');
+    }
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     try {
@@ -117,7 +136,7 @@ export default function AdminDashboard() {
                         <td>{idx + 1}</td>
                         <td>{new Date(row.requested_date).toLocaleDateString()}</td>
                         <td>{row.roll_number}</td>
-                        <td>{row.student_name}</td>
+                          <td>{row.full_name}</td>
                         <td>{row.certificate_type}</td>
                         <td>{row.status}</td>
                       </tr>
@@ -137,6 +156,7 @@ export default function AdminDashboard() {
         {activeMenu === "Certificate Requests" && <CertificateRequests />}
   {/* Request Details removed */}
         {activeMenu === "Issued Certificates" && <IssuedCertificates />}
+        {activeMenu === "Certificate Templates" && <CertificateTemplates />}
   {/* Certificate Templates and QR Verification Logs removed */}
         {activeMenu === "Student Management" && <StudentManagement />}
       </div>

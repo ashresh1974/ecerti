@@ -29,9 +29,9 @@ function IssuedCertificates() {
     return sortable.filter(cert => {
       const searchText = search.toLowerCase();
       return (
-        cert.student_name.toLowerCase().includes(searchText) ||
-        cert.roll_number.toLowerCase().includes(searchText) ||
-        cert.certificate_type.toLowerCase().includes(searchText)
+        (cert.full_name || '').toLowerCase().includes(searchText) ||
+        (cert.roll_number || '').toLowerCase().includes(searchText) ||
+        (cert.certificate_type || '').toLowerCase().includes(searchText)
       );
     });
   }, [certificates, search, sortConfig]);
@@ -84,7 +84,7 @@ function IssuedCertificates() {
             <th onClick={() => requestSort('issued_date')} style={{ cursor: 'pointer' }}>
               Issued Date {renderSortArrow('issued_date')}
             </th>
-            <th>Download</th>
+            <th>View</th>
           </tr>
         </thead>
         <tbody>
@@ -100,7 +100,18 @@ function IssuedCertificates() {
                 <td>{cert.certificate_type}</td>
                 <td>{cert.issued_date ? new Date(cert.issued_date).toLocaleString() : '-'}</td>
                 <td>
-                  <button className="more-btn" onClick={() => window.open(`/api/certificate/download/${cert.reference_num}`,'_blank')}>Download</button>
+                  <button
+                    className="more-btn"
+                    onClick={() => {
+                      if (!cert.pdf_path) return alert('Certificate PDF not available yet.');
+                      // Fallback to absolute host:port if above fails
+                      const openUrl = `/certificates/${cert.pdf_path}`;
+                      window.open(openUrl, '_blank');
+                    }}
+                    disabled={!cert.pdf_path}
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))
