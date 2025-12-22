@@ -1,2 +1,5 @@
 node_modules
 .env
+public/certificates/
+public/qr-codes/
+public/assets/signatures/
