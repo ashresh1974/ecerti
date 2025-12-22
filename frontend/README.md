@@ -69,7 +69,7 @@ In the `backend/` folder, create a `.env` file with the following variables (rep
 DB_HOST=localhost
 DB_USER=your_mysql_username
 DB_PASSWORD=your_mysql_password
-DB_DATABASE=ecerti
+DB_DATABASE=database_name
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_email_password
 SESSION_SECRET=your_secret_key
