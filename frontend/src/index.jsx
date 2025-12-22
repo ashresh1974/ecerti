@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from '@vercel/analytics/react';
 import axios from 'axios';
 import './index.css';
 import './styles/shared.css';
@@ -124,6 +125,7 @@ root.render(
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
       <SpeedInsights />
+      <Analytics />
     </Router>
   </React.StrictMode>
 );
