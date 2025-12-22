@@ -1,11 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRouteStudent = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
-  const isAuthenticated = token && Number(role) === 0;
+  useEffect(() => {
+    const validateSession = async () => {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+
+      // If no token/role locally, not authenticated
+      if (!token || Number(role) !== 0) {
+        setIsAuthenticated(false);
+        return;
+      }
+
+      // Validate session with backend
+      try {
+        const response = await fetch('http://10.55.47.47:5000/api/me', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+          setIsAuthenticated(true);
+        } else {
+          // Session expired on server
+          localStorage.clear();
+          sessionStorage.clear();
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error('Session validation error:', error);
+        localStorage.clear();
+        sessionStorage.clear();
+        setIsAuthenticated(false);
+      }
+    };
+
+    validateSession();
+  }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

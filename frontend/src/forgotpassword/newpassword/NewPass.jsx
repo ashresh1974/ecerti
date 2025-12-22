@@ -9,7 +9,6 @@ function NewPass() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,10 +25,14 @@ function NewPass() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setMessage('');
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+      return;
+    }
+    // eslint-disable-next-line no-useless-escape
+    if (!/(?=.*\d)(?=.*[@#$%^&*!])/.test(password)) {
+      setError('Password must contain at least one number and one symbol (@, #, $, %, ^, &, *, !).');
       return;
     }
 
@@ -39,7 +42,7 @@ function NewPass() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/forgot-password/reset-password', {
+      const response = await fetch('http://10.55.47.47:5000/api/forgot-password/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,10 +53,7 @@ function NewPass() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(data.message);
-        setTimeout(() => {
-          navigate('/');
-        }, 2000);
+        navigate('/passwordresetsuccess');
       } else {
         setError(data.message);
       }
@@ -77,7 +77,11 @@ function NewPass() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <span className="password-toggle-icon" onClick={togglePasswordVisibility}>
+              <span className="password-toggle-icon" onClick={togglePasswordVisibility}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { togglePasswordVisibility(); e.preventDefault(); } }}>
                 <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
               </span>
             </div>
@@ -92,13 +96,16 @@ function NewPass() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <span className="password-toggle-icon" onClick={toggleConfirmPasswordVisibility}>
+              <span className="password-toggle-icon" onClick={toggleConfirmPasswordVisibility}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { toggleConfirmPasswordVisibility(); e.preventDefault(); } }}>
                 <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
               </span>
             </div>
           </div>
           {error && <p className="error-text">{error}</p>}
-          {message && <p className="success-text">{message}</p>}
           <button type="submit" className="reset-password-btn">Reset Password</button>
         </form>
       </div>

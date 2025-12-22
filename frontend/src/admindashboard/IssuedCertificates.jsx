@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import './AdminDash.css';
+
 function IssuedCertificates() {
   const [certificates, setCertificates] = useState([]);
   const [search, setSearch] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/certificate/issued', { withCredentials: true })
+    axios.get('http://10.55.47.47:5000/api/certificate/issued', { withCredentials: true })
       .then(res => setCertificates(res.data))
       .catch(() => setCertificates([]));
   }, []);
@@ -31,7 +35,8 @@ function IssuedCertificates() {
       return (
         (cert.full_name || '').toLowerCase().includes(searchText) ||
         (cert.roll_number || '').toLowerCase().includes(searchText) ||
-        (cert.certificate_type || '').toLowerCase().includes(searchText)
+        (cert.certificate_type || '').toLowerCase().includes(searchText) ||
+        (cert.reference_num || '').toLowerCase().includes(searchText)
       );
     });
   }, [certificates, search, sortConfig]);
@@ -51,16 +56,18 @@ function IssuedCertificates() {
       : <span style={{ fontSize: '0.9em', marginLeft: 4 }}>▼</span>;
   };
 
+
+
   return (
     <div className="dashboard requested-certificates">
       <h1>Issued Certificates</h1>
       <div style={{ marginBottom: 18, display: 'flex', gap: 16 }}>
         <input
           type="text"
-          placeholder="Search by name, roll number, or type..."
+          placeholder="Search by reference number, roll number, name, or type..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: 5, border: '1px solid #c7daf6', minWidth: 220 }}
+          className="search-input"
         />
       </div>
       <table>
@@ -99,20 +106,7 @@ function IssuedCertificates() {
                 <td>{cert.roll_number}</td>
                 <td>{cert.certificate_type}</td>
                 <td>{cert.issued_date ? new Date(cert.issued_date).toLocaleString() : '-'}</td>
-                <td>
-                  <button
-                    className="more-btn"
-                    onClick={() => {
-                      if (!cert.pdf_path) return alert('Certificate PDF not available yet.');
-                      // Fallback to absolute host:port if above fails
-                      const openUrl = `/certificates/${cert.pdf_path}`;
-                      window.open(openUrl, '_blank');
-                    }}
-                    disabled={!cert.pdf_path}
-                  >
-                    View
-                  </button>
-                </td>
+                <td><button onClick={() => navigate(`/certificate-view/${cert.reference_num}`)} className="edit-btn">View</button></td>
               </tr>
             ))
           )}

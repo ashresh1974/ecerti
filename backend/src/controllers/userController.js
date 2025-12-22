@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const bcrypt = require('bcrypt');
 
 // Get user details
 exports.getDetails = async (req, res) => {
@@ -120,5 +121,35 @@ exports.applyCertificate = async (req, res) => {
     res.status(201).json({ message: 'Certificate application submitted.' });
   } catch (error) {
     res.status(500).json({ message: 'Database error.' });
+  }
+};
+
+// Change user password
+exports.changePassword = async (req, res) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const userId = req.session.user.id;
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ message: 'New password and confirm password do not match.' });
+  }
+
+  try {
+    const user = await db.query('SELECT password FROM users WHERE id = ?', [userId]);
+    if (user.length === 0) return res.status(404).json({ message: 'User not found.' });
+
+    const isMatch = await bcrypt.compare(currentPassword, user[0].password);
+    if (!isMatch) return res.status(401).json({ message: 'Current password is incorrect.' });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await db.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
+
+    res.status(200).json({ message: 'Password changed successfully.' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Server error.', error: error.message });
   }
 };

@@ -1,53 +1,120 @@
-# Getting Started with Create React App
+# e-Certificate Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Name:** Devarakonda Ashresh Kumar  
+**Roll No:** 4511-22-733-008  
+**Email:** dashreshkumar@gmail.com  
+**Phone:** +91 9391448946
 
-## Available Scripts
+This is a full-stack web application for managing and issuing digital certificates. It includes user authentication, certificate generation with QR codes, and verification features.
 
-In the project directory, you can run:
+## Prerequisites
 
-### `npm start`
+Before running the project, ensure you have the following installed:
+- **Node.js** (version 16 or higher) - Download from [nodejs.org](https://nodejs.org/)
+- **MySQL** (version 8 or higher) - Download from [mysql.com](https://www.mysql.com/)
+- **Git** (for cloning the repository, if needed)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Project Structure
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- `backend/` - Server-side code (Node.js, Express)
+- `frontend/` - Client-side code (React.js)
+- `docs/` - Documentation files
 
-### `npm test`
+## Installation Steps
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 1. Clone or Navigate to the Project Directory
+If not already done, navigate to the project root directory:
+```
+cd d:\ecerti
+```
 
-### `npm run build`
+### 2. Install Backend Dependencies
+Navigate to the backend folder and install dependencies:
+```
+cd backend
+npm install
+```
+**Required Backend Dependencies:**
+- `express` - Web framework
+- `mysql` - Database connector
+- `bcrypt` - Password hashing
+- `nodemailer` - Email sending
+- `puppeteer` - PDF generation
+- `qrcode` - QR code generation
+- `cors`, `dotenv`, `express-session`, `multer`, etc.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 3. Install Frontend Dependencies
+Navigate to the frontend folder and install dependencies:
+```
+cd ../frontend
+npm install
+```
+**Required Frontend Dependencies:**
+- `react` - UI library
+- `react-router-dom` - Routing
+- `axios` - HTTP client
+- `jspdf` - PDF handling
+- `react-icons` - Icons
+- `@testing-library/react` - Testing utilities
+- `html2canvas`, etc.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 4. Setup Database
+- Create a MySQL database named `ecerti` (or as per your configuration).
+- Run the database schema scripts from `docs/DATABASE_MODULE.md` or create tables manually for users, certificates, etc.
+- Ensure MySQL server is running.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 5. Configure Environment Variables
+In the `backend/` folder, create a `.env` file with the following variables (replace with your actual values):
+```
+DB_HOST=localhost
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_DATABASE=ecerti
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_email_password
+SESSION_SECRET=your_secret_key
+```
+- `DB_*` - MySQL connection details
+- `EMAIL_*` - For sending emails (e.g., OTP)
+- `SESSION_SECRET` - For session management
 
-### `npm run eject`
+## Running the Application
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 1. Start the Backend Server
+In the `backend/` folder:
+```
+npm start
+```
+This starts the server on `http://localhost:5000` (or as configured).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 2. Start the Frontend Application
+In a new terminal, in the `frontend/` folder:
+```
+npm start
+```
+This starts the React app on `http://localhost:3000`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Access the Application
+- Open your browser and go to `http://localhost:3000` to use the frontend.
+- The backend APIs are available at `http://localhost:5000`.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Additional Notes
+- Ensure both backend and frontend are running simultaneously.
+- For production, build the frontend with `npm run build` and serve the static files.
+- Refer to `docs/` for detailed module documentation.
+- If you encounter issues, check console logs for errors.
+
+## Testing
+Run tests for the frontend:
+```
+npm test
+```
+Backend tests are not configured yet.
 
 ## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- [React Documentation](https://reactjs.org/)
+- [Express.js Guide](https://expressjs.com/)
+- [MySQL Documentation](https://dev.mysql.com/doc/)
 
 ### Analyzing the Bundle Size
 
@@ -68,3 +135,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+
+## QR Code Verification Link
+
+The QR code verification link is: `http://10.55.47.47:3000/verify/{reference_number}`

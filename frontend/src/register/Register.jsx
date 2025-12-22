@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import "./Register.css";
 
 export default function Register() {
@@ -26,7 +27,9 @@ export default function Register() {
   const navigate = useNavigate();
 
   const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const gmailRegex = /^[^\s@]+@gmail\.com$/;
+    return emailRegex.test(email) && gmailRegex.test(email);
   };
 
   const handleSendOtp = async (e) => {
@@ -38,13 +41,13 @@ export default function Register() {
       setEmailError("Email ID is required.");
       isValid = false;
     } else if (!validateEmail(email)) {
-      setEmailError("Invalid email format.");
+      setEmailError("Invalid email id. Only Gmail addresses are allowed.");
       isValid = false;
     }
     if (!isValid) return;
     setOtpLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/register/send-otp', {
+      const response = await fetch('http://10.55.47.47:5000/api/register/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -69,7 +72,7 @@ export default function Register() {
     setMsg("");
     setOtpError("");
     try {
-      const response = await fetch('http://localhost:5000/api/register/verify-otp', {
+      const response = await fetch('http://10.55.47.47:5000/api/register/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
@@ -144,14 +147,12 @@ export default function Register() {
   return (
     <div className="login-bg">
       <div className="login-container">
+        <button className="back-button" onClick={() => navigate(-1)} title="Go back" style={{ padding: "6px 12px", fontSize: "14px", width: "auto" }}>
+          Back
+        </button>
         <h2 className="portal-title" style={{ marginBottom: 10 }}>Register</h2>
-        {msg && (
-          <div className={msg.toLowerCase().includes("success") || msg.toLowerCase().includes("verified") ? "success-message" : "error-message"}>
-            {msg}
-          </div>
-        )}
         <form onSubmit={handleRegister}>
-          <label>Full Name</label>
+          <label style={{ textAlign: "left", display: "block" }}>Full Name</label>
           <input
             type="text"
             value={fullName}
@@ -161,7 +162,7 @@ export default function Register() {
           />
           {fullNameError && <div className="error-text">{fullNameError}</div>}
 
-          <label>Gender</label>
+          <label style={{ textAlign: "left", display: "block" }}>Gender</label>
           <div className="gender-options">
             <label>
               <input
@@ -193,7 +194,7 @@ export default function Register() {
           </div>
 
 
-          <label>Roll Number</label>
+          <label style={{ textAlign: "left", display: "block" }}>Roll Number</label>
           <input
             type="text"
             value={roll}
@@ -208,7 +209,7 @@ export default function Register() {
           {/* Side-by-side Course and Branch */}
           <div className="flex-row">
             <div className="flex-half">
-              <label>Course</label>
+              <label style={{ textAlign: "left", display: "block" }}>Course</label>
               <select
                 value={course}
                 onChange={e => setCourse(e.target.value)}
@@ -221,7 +222,7 @@ export default function Register() {
               {courseError && <div className="error-text">{courseError}</div>}
             </div>
             <div className="flex-half" style={{ marginLeft: 12 }}>
-              <label>Branch</label>
+              <label style={{ textAlign: "left", display: "block" }}>Branch</label>
               <select
                 value={branch}
                 onChange={e => setBranch(e.target.value)}
@@ -237,89 +238,96 @@ export default function Register() {
             </div>
           </div>
 
-          <label>Mobile Number</label>
+          <label style={{ textAlign: "left", display: "block" }}>Mobile Number</label>
           <input
             type="text"
             value={mobile}
             onChange={e => {
               if (/^\d{0,10}$/.test(e.target.value)) setMobile(e.target.value);
-            }}
-            placeholder="Mobile number"
-            required
-          />
-          {mobileError && <div className="error-text">{mobileError}</div>}
+                    }}
+                    placeholder="Mobile number"
+                    required
+                    />
+                    {mobileError && <div className="error-text">{mobileError}</div>}
 
-          <label>Email ID</label>
-          <div className="password-field" style={{ marginBottom: 13 }}>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="Email ID"
-              required
-              style={{ marginBottom: 0 }}
-              disabled={otpSent}
-            />
-            <button
-              className="otp-send-btn"
-              type="button"
-              onClick={handleSendOtp}
-              disabled={otpLoading || email.length === 0 || otpSent}
-              style={{ background: "#1c76fd", color: "#fff", borderRadius: 6, fontWeight: 600, minWidth: 110 }}
-            >
-              {otpLoading ? "Sending..." : otpBtnText}
-            </button>
-          </div>
-          {emailError && <div className="error-text">{emailError}</div>}
+                    <label style={{ textAlign: "left", display: "block" }}>Email ID</label>
+                    <div className="password-field" style={{ marginBottom: 13, display: "flex", gap: 10, alignItems: "stretch" }}>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="Email ID"
+                      required
+                      style={{ marginBottom: 0, flex: 1 }}
+                      disabled={otpSent}
+                    />
+                    <button
+                      className="otp-send-btn"
+                      type="button"
+                      onClick={handleSendOtp}
+                      disabled={otpLoading || email.length === 0 || otpSent}
+                      style={{ background: "#1c76fd", color: "#fff", borderRadius: 6, fontWeight: 600, minWidth: 110, border: 'none', padding: '8px 12px', cursor: 'pointer' }}
+                    >
+                      {otpLoading ? "Sending..." : otpBtnText}
+                    </button>
+                    </div>
+                    {emailError && <div className="error-text">{emailError}</div>}
 
-          {otpSent && (
-            <div style={{ display: "flex", alignItems: "center", marginBottom: 14 }}>
-              <input
-                type="text"
-                value={otp}
-                onChange={e => {
-                  if (/^\d{0,6}$/.test(e.target.value)) setOtp(e.target.value);
-                }}
-                placeholder="Enter OTP"
-                style={{ flex: 1, marginRight: 10 }}
-                disabled={verified}
-                required
-              />
-              <button
-                type="button"
-                className="otp-send-btn"
-                style={{
-                  background: verified ? "#48c774" : "#1c76fd",
-                  color: "#fff",
-                  borderRadius: 6,
-                  fontWeight: 600,
-                  minWidth: 80,
-                  border: 'none',
-                  cursor: verified ? "not-allowed" : "pointer",
-                }}
-                onClick={handleVerifyOtp}
-                disabled={verified || otp.length !== 6}
-              >
-                {verified ? "Verified" : "Verify"}
-              </button>
-            </div>
-          )}
-          {otpError && <div className="error-text">{otpError}</div>}
+                    {msg && (
+                      <div className={msg.toLowerCase().includes("success") || msg.toLowerCase().includes("verified") || msg.toLowerCase().includes("sent") || msg.toLowerCase().includes("otp") ? "success-message" : "error-message"}>
+                        {msg}
+                      </div>
+                    )}
 
-          <button
-            type="submit"
-            className="proceed-btn"
-            style={{ marginTop: 18, opacity: verified ? 1 : 0.7, cursor: verified ? "pointer" : "not-allowed" }}
-            disabled={!verified}
-          >
-            Proceed
-          </button>
-        </form>
-        <div className="register-row">
-          <span>Already have an account?</span>{" "}
-          <Link to="/login" className="register-link">LOGIN</Link>
-        </div>
-      </div>
-    </div>
-  );
-}
+                    {otpSent && (
+                    <div style={{ display: "flex", alignItems: "stretch", marginBottom: 14, gap: 10 }}>
+                      <input
+                      type="text"
+                      value={otp}
+                      onChange={e => {
+                        if (/^\d{0,6}$/.test(e.target.value)) setOtp(e.target.value);
+                      }}
+                      placeholder="Enter OTP"
+                      style={{ flex: 1, marginBottom: 0 }}
+                      disabled={verified}
+                      required
+                      />
+                      <button
+                      type="button"
+                      className="otp-send-btn"
+                      style={{
+                        background: verified ? "#48c774" : "#1c76fd",
+                        color: "#fff",
+                        borderRadius: 6,
+                        fontWeight: 600,
+                        minWidth: 80,
+                        border: 'none',
+                        cursor: verified ? "not-allowed" : "pointer",
+                        padding: '8px 12px',
+                      }}
+                      onClick={handleVerifyOtp}
+                      disabled={verified || otp.length !== 6}
+                      >
+                      {verified ? "Verified" : "Verify"}
+                      </button>
+                    </div>
+                    )}
+                    {otpError && <div className="error-text">{otpError}</div>}
+
+                    <button
+                    type="submit"
+                    className="proceed-btn"
+                    style={{ marginTop: 18, opacity: verified ? 1 : 0.7, cursor: verified ? "pointer" : "not-allowed" }}
+                    disabled={!verified}
+                    >
+                    Proceed
+                    </button>
+                  </form>
+                  <div className="register-row">
+                    <span>Already have an account?</span>{" "}
+                    <Link to="/login" className="register-link">LOGIN</Link>
+                  </div>
+                </div>
+              </div>
+            );
+          }

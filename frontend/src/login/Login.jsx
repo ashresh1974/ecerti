@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,17 +13,27 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Clear logout flags when login page is loaded
+  useEffect(() => {
+    localStorage.removeItem('isLoggedOut');
+    sessionStorage.removeItem('isLoggedOut');
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
+      const response = await axios.post('http://10.55.47.47:5000/api/login', {
         email: username,
         password,
       }, { withCredentials: true });
       
       if (response.status === 200) {
         const { role } = response.data.user;
+        // Clear any logout flags from previous session
+        localStorage.removeItem('isLoggedOut');
+        sessionStorage.removeItem('isLoggedOut');
+        
         // backend uses server-side session (express-session). Store a local flag so client
         // protected-route checks pass, and persist user info.
         localStorage.setItem('token', 'true');
@@ -74,7 +84,7 @@ function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <span className="password-toggle-icon" onClick={togglePasswordVisibility}>
+              <span className="password-toggle-icon" style={{ transform: 'translateY(-14px)' }} onClick={togglePasswordVisibility}>
                 <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
               </span>
             </div>

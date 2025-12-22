@@ -3,42 +3,40 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f0f2f5;
+  background-color: var(--bg);
 }
 
 .register-success-box {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: var(--card-bg);
+  padding: 32px;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(32,81,167,0.06);
   text-align: center;
-  max-width: 400px;
+  max-width: 440px;
   width: 100%;
 }
 
 .register-success-box h2 {
-  color: #28a745;
+  color: var(--success);
   margin-bottom: 20px;
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .register-success-box p {
-  color: #555;
-  margin-bottom: 30px;
-  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 26px;
+  font-size: 15px;
 }
 
 .home-button {
-  background-color: #007bff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
-  padding: 12px 25px;
+  padding: 10px 22px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
+  font-size: 15px;
+  transition: transform 0.12s, box-shadow 0.12s;
 }
 
-.home-button:hover {
-  background-color: #0056b3;
-}
+.home-button:hover { transform: translateY(-3px); }

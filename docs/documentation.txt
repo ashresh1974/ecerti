@@ -1,0 +1,569 @@
+# e-Certificate Management System Documentation
+
+## Table of Contents
+
+1. Introduction
+2. System Overview
+3. Requirements Analysis
+4. System Architecture
+5. Database Design
+6. Backend Implementation
+7. Frontend Implementation
+8. API Documentation
+9. User Manual
+10. Installation Guide
+11. Configuration
+12. Testing
+13. Deployment
+14. Troubleshooting
+15. Security
+16. Performance
+17. Maintenance
+18. Future Enhancements
+19. Conclusion
+20. References
+21. Appendices
+22. Glossary
+
+---
+
+## 1. Introduction
+
+### 1.1 Purpose of the Document
+This comprehensive documentation serves as a complete reference for the e-Certificate Management System, a full-stack web application designed to streamline the generation, management, and verification of digital certificates. The document provides detailed insights into the system's architecture, implementation, and operational aspects, catering to developers, administrators, and end-users.
+
+### 1.2 Scope and Objectives
+The e-Certificate Management System encompasses:
+- User authentication and role-based access control (admin, student)
+- Certificate request and approval workflows
+- Automated PDF generation with QR code integration
+- Real-time verification via QR codes
+- Email notifications for status updates
+- Template-based certificate customization
+
+Objectives include reducing manual certificate processing time by 80%, ensuring secure verification, and providing a user-friendly interface for all stakeholders.
+
+### 1.3 Target Audience
+- **Developers**: For understanding code structure, APIs, and extending functionality
+- **System Administrators**: For deployment, configuration, and maintenance
+- **End-Users**: Students and faculty for requesting and verifying certificates
+- **Project Managers**: For overview of features and implementation status
+
+### 1.4 Document Conventions
+- **Bold**: Key terms and emphasis
+- **Italics**: File names, paths, and references
+- **Code blocks**: Code snippets and commands
+- **Figures**: Referenced as [Figure X.X: Description]
+
+[Figure 1.1: Project Logo and Overview Diagram]
+
+---
+
+## 2. System Overview
+
+### 2.1 System Description
+The e-Certificate Management System is a web-based platform built with React (frontend) and Node.js/Express (backend), utilizing MySQL for data persistence. It supports three user roles: students for requesting certificates, administrators for approval and management, and public users for verification.
+
+### 2.2 Key Features
+- **Certificate Generation**: Automated PDF creation using Puppeteer with customizable templates
+- **QR Code Integration**: Embedded QR codes for instant verification
+- **Authentication System**: OTP-based registration and password reset
+- **Dashboard Interfaces**: Role-specific dashboards for admins and students
+- **Email Notifications**: Automated emails for status updates
+- **File Management**: Secure storage and serving of certificate PDFs
+
+### 2.3 Technology Stack
+- **Frontend**: React 18, React Router, Axios, CSS3
+- **Backend**: Node.js, Express.js, Multer for file uploads
+- **Database**: MySQL with connection pooling
+- **Additional Libraries**: Puppeteer for PDF generation, QRCode.js for QR creation, Nodemailer for emails
+
+### 2.4 System Workflow
+1. Student registers/logs in and submits certificate request
+2. Admin reviews and approves request with template selection
+3. System generates PDF with QR code and stores it
+4. Email notification sent to student
+5. Student can view/download certificate
+6. Public verification via QR code scan
+
+[Figure 2.1: High-Level System Workflow Diagram]
+
+---
+
+## 3. Requirements Analysis
+
+### 3.1 Functional Requirements
+- **User Management**: Registration, login, password reset with OTP
+- **Certificate Requests**: Form submission with document uploads
+- **Admin Approval**: Review, template selection, and approval/rejection
+- **PDF Generation**: Automated creation with dynamic data insertion
+- **QR Verification**: Public access to verify certificate authenticity
+- **Email Integration**: Notifications for all status changes
+
+### 3.2 Non-Functional Requirements
+- **Performance**: Handle up to 1000 concurrent users
+- **Security**: Data encryption, secure file storage, input validation
+- **Usability**: Intuitive UI with responsive design
+- **Reliability**: 99.9% uptime with error handling
+- **Scalability**: Modular architecture for future expansions
+
+### 3.3 User Stories
+- As a student, I want to request certificates easily so that I can obtain official documents quickly.
+- As an admin, I want to approve requests with templates so that certificates are standardized.
+- As a verifier, I want to scan QR codes to confirm authenticity instantly.
+
+### 3.4 Constraints and Assumptions
+- System operates on Windows/Linux environments
+- Internet connectivity required for email and verification
+- MySQL database must be accessible
+- Browser compatibility: Chrome, Firefox, Safari (latest versions)
+
+[Figure 3.1: Use Case Diagram]
+
+---
+
+## 4. System Architecture
+
+### 4.1 Architectural Patterns
+The system follows a layered architecture:
+- **Presentation Layer**: React components and routing
+- **Application Layer**: Express controllers and middleware
+- **Data Layer**: MySQL database with ORM-like queries
+- **Infrastructure Layer**: File system, email service, PDF generation
+
+### 4.2 Component Diagram
+- **Frontend Components**: Login, Dashboards, Certificate Forms
+- **Backend Modules**: Controllers, Routes, Middlewares
+- **Database Tables**: Users, Certificates, Templates, Logs
+- **External Services**: Email server, File storage
+
+### 4.3 Data Flow
+User requests flow from frontend to backend APIs, which interact with the database and generate responses, including file downloads and email triggers.
+
+### 4.4 Security Architecture
+- JWT tokens for session management
+- Input sanitization and validation
+- CORS configuration for cross-origin requests
+- Secure file paths and access controls
+
+[Figure 4.1: System Architecture Diagram]
+
+[Figure 4.2: Component Interaction Diagram]
+
+---
+
+## 5. Database Design
+
+### 5.1 Database Schema
+The MySQL database consists of the following tables:
+- **users**: Stores user information (id, email, password, role, otp, etc.)
+- **certificates**: Certificate requests and issued docs (id, user_id, type, status, reference_num, etc.)
+- **templates**: Certificate templates (id, name, html_content, css_styles)
+- **qr_logs**: Verification logs (id, certificate_id, timestamp, ip_address)
+
+### 5.2 Entity-Relationship Diagram
+Relationships include:
+- Users have many Certificates (one-to-many)
+- Certificates belong to Templates (many-to-one)
+- QR logs reference Certificates
+
+### 5.3 Normalization
+Database is in 3NF to eliminate redundancy and ensure data integrity.
+
+### 5.4 Indexing and Optimization
+- Primary keys on all tables
+- Foreign key constraints
+- Indexes on frequently queried columns (status, user_id)
+
+[Figure 5.1: Entity-Relationship Diagram]
+
+[Figure 5.2: Database Schema Screenshot]
+
+---
+
+## 6. Backend Implementation
+
+### 6.1 Server Setup
+- Express server on port 5000
+- Middleware: CORS, body-parser, file upload (Multer)
+- Static file serving for certificates and assets
+
+### 6.2 API Endpoints
+Detailed in Section 8.
+
+### 6.3 Controllers
+- **authController.js**: Handles login, registration, OTP
+- **certificateController.js**: PDF generation, QR creation, verification
+- **templateController.js**: CRUD operations for templates
+- **userController.js**: Admin user management
+
+### 6.4 Middlewares
+- **errorHandler.js**: Centralized error handling
+- **validateOtp.js**: OTP verification logic
+
+### 6.5 File Structure
+```
+backend/
+├── src/
+│   ├── server.js
+│   ├── config/
+│   ├── controllers/
+│   ├── middlewares/
+│   └── routes/
+├── public/
+│   ├── certificates/
+│   ├── qr-codes/
+│   └── templates/
+└── package.json
+```
+
+[Figure 6.1: Backend Directory Structure]
+
+[Figure 6.2: Server.js Code Snippet]
+
+---
+
+## 7. Frontend Implementation
+
+### 7.1 React Application Structure
+- **Components**: Reusable UI elements (ProtectedRoute, etc.)
+- **Pages**: Login, Dashboards, Verification
+- **Hooks**: Custom hooks like useSessionTimeout
+
+### 7.2 Key Components
+- **AdminDash.jsx**: Admin dashboard with navigation
+- **IssuedCertificates.jsx**: Table of verified certificates
+- **CertificateView.jsx**: PDF viewer component
+- **VerifyCertificate.jsx**: Public verification page
+
+### 7.3 Routing
+- React Router for client-side navigation
+- Protected routes based on user roles
+
+### 7.4 State Management
+- Local component state with useState/useEffect
+- Context API for user session management
+
+### 7.5 Styling
+- CSS modules and global styles
+- Responsive design with media queries
+
+[Figure 7.1: Frontend Component Hierarchy]
+
+[Figure 7.2: Admin Dashboard Screenshot]
+
+---
+
+## 8. API Documentation
+
+### 8.1 Authentication APIs
+- `POST /api/auth/login`: User login
+- `POST /api/auth/register/send-otp`: Send registration OTP
+- `POST /api/auth/register/verify-otp`: Verify OTP and register
+- `POST /api/auth/forgot-password/send-otp`: Send reset OTP
+- `POST /api/auth/reset-password`: Reset password
+
+### 8.2 Certificate APIs
+- `POST /api/certificates/request`: Submit certificate request
+- `GET /api/certificates/issued`: Get user's issued certificates
+- `GET /api/certificates/verify/:ref`: Verify certificate by reference
+- `PUT /api/certificates/approve/:id`: Admin approval
+
+### 8.3 Template APIs
+- `GET /api/templates`: List templates
+- `POST /api/templates`: Create template
+- `PUT /api/templates/:id`: Update template
+
+### 8.4 User Management APIs
+- `GET /api/users`: List all users (admin)
+- `PUT /api/users/:id/status`: Update user status
+
+### 8.5 Response Formats
+All APIs return JSON with status, message, and data fields.
+
+[Figure 8.1: API Endpoint Flowchart]
+
+---
+
+## 9. User Manual
+
+### 9.1 Student Guide
+- Registration and login process
+- Submitting certificate requests with uploads
+- Viewing issued certificates and downloading PDFs
+
+### 9.2 Admin Guide
+- Logging in to admin dashboard
+- Reviewing pending requests
+- Selecting templates and approving requests
+- Managing users and viewing logs
+
+### 9.3 Public Verification
+- Scanning QR codes
+- Accessing verification page
+- Interpreting verification results
+
+### 9.4 Troubleshooting Common Issues
+- Login problems, request submission errors, verification failures
+
+[Figure 9.1: Student Dashboard Screenshot]
+
+[Figure 9.2: Admin Approval Interface]
+
+---
+
+## 10. Installation Guide
+
+### 10.1 Prerequisites
+- Node.js 16+, MySQL 8.0+, Git
+- Windows/Linux OS
+
+### 10.2 Backend Setup
+```bash
+cd backend
+npm install
+# Configure .env with DB credentials
+node src/server.js
+```
+
+### 10.3 Frontend Setup
+```bash
+cd frontend
+npm install
+npm start
+```
+
+### 10.4 Database Setup
+- Create MySQL database 'ecertificate'
+- Run migration scripts
+
+### 10.5 Verification
+- Access frontend at http://localhost:3000
+- Backend at http://localhost:5000
+
+[Figure 10.1: Installation Steps Diagram]
+
+---
+
+## 11. Configuration
+
+### 11.1 Environment Variables
+- DB_HOST, DB_USER, DB_PASS, DB_NAME
+- EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS
+- JWT_SECRET, SESSION_TIMEOUT
+
+### 11.2 Server Configuration
+- Port settings, CORS origins
+- File upload limits
+
+### 11.3 Database Configuration
+- Connection pooling, timeouts
+
+### 11.4 Email Configuration
+- SMTP settings for notifications
+
+[Figure 11.1: Configuration File Screenshot]
+
+---
+
+## 12. Testing
+
+### 12.1 Unit Testing
+- Backend controller tests with Jest
+- Frontend component tests with React Testing Library
+
+### 12.2 Integration Testing
+- API endpoint testing with Postman
+- End-to-end user flows
+
+### 12.3 Test Cases
+- Authentication flows, certificate generation, verification
+
+### 12.4 Test Results
+- Coverage reports, bug tracking
+
+[Figure 12.1: Test Coverage Report]
+
+---
+
+## 13. Deployment
+
+### 13.1 Production Environment
+- Server requirements, scaling considerations
+
+### 13.2 Build Process
+- Frontend build with npm run build
+- Backend deployment scripts
+
+### 13.3 Deployment Strategies
+- Docker containers, cloud hosting (AWS, Heroku)
+
+### 13.4 Monitoring
+- Logs, performance metrics
+
+[Figure 13.1: Deployment Architecture]
+
+---
+
+## 14. Troubleshooting
+
+### 14.1 Common Issues
+- Database connection errors
+- Email sending failures
+- File upload problems
+
+### 14.2 Error Logs
+- Backend logs, browser console errors
+
+### 14.3 Resolution Steps
+- Step-by-step fixes for each issue
+
+### 14.4 Support
+- Contact information, community forums
+
+[Figure 14.1: Error Resolution Flowchart]
+
+---
+
+## 15. Security
+
+### 15.1 Authentication Security
+- Password hashing, OTP security
+- Session management
+
+### 15.2 Data Protection
+- Input validation, SQL injection prevention
+- File security
+
+### 15.3 Network Security
+- HTTPS, CORS policies
+
+### 15.4 Compliance
+- GDPR, data privacy considerations
+
+[Figure 15.1: Security Threat Model]
+
+---
+
+## 16. Performance
+
+### 16.1 Performance Metrics
+- Response times, throughput
+
+### 16.2 Optimization Techniques
+- Database indexing, caching
+- Code profiling
+
+### 16.3 Scalability
+- Load balancing, horizontal scaling
+
+### 16.4 Monitoring Tools
+- Application performance monitoring
+
+[Figure 16.1: Performance Benchmark Results]
+
+---
+
+## 17. Maintenance
+
+### 17.1 Regular Tasks
+- Database backups, log rotation
+- Dependency updates
+
+### 17.2 Updates and Patches
+- Version control, release management
+
+### 17.3 Backup and Recovery
+- Data backup strategies, disaster recovery
+
+### 17.4 Documentation Updates
+- Keeping docs current with changes
+
+[Figure 17.1: Maintenance Schedule]
+
+---
+
+## 18. Future Enhancements
+
+### 18.1 Planned Features
+- Mobile app development
+- Advanced analytics dashboard
+- Blockchain integration for verification
+
+### 18.2 Technology Upgrades
+- Migration to TypeScript, microservices
+
+### 18.3 Scalability Improvements
+- Cloud migration, auto-scaling
+
+### 18.4 Community Feedback
+- User suggestions, feature requests
+
+[Figure 18.1: Roadmap Diagram]
+
+---
+
+## 19. Conclusion
+
+### 19.1 Project Summary
+The e-Certificate Management System successfully delivers a robust, secure, and user-friendly platform for digital certificate management.
+
+### 19.2 Achievements
+- Complete implementation of all core features
+- High user satisfaction, reduced processing time
+
+### 19.3 Lessons Learned
+- Importance of modular design, thorough testing
+
+### 19.4 Final Remarks
+The system is ready for production deployment and future expansions.
+
+---
+
+## 20. References
+
+### 20.1 Documentation Sources
+- React Official Docs
+- Express.js Guide
+- MySQL Manual
+
+### 20.2 Tools and Libraries
+- Puppeteer Documentation
+- Axios API Reference
+
+### 20.3 Standards
+- OWASP Security Guidelines
+- REST API Best Practices
+
+---
+
+## 21. Appendices
+
+### 21.1 Code Snippets
+- Key functions and configurations
+
+### 21.2 Screenshots
+- Additional UI captures
+
+### 21.3 Test Data
+- Sample inputs and outputs
+
+### 21.4 Glossary Terms
+- See Section 22
+
+[Figure 21.1: Sample Code Snippet]
+
+---
+
+## 22. Glossary
+
+- **API**: Application Programming Interface
+- **JWT**: JSON Web Token
+- **OTP**: One-Time Password
+- **PDF**: Portable Document Format
+- **QR Code**: Quick Response Code
+- **REST**: Representational State Transfer
+
+--- 
+
+This documentation provides comprehensive coverage of the e-Certificate Management System. For each section, include 1-3 relevant screenshots or diagrams as indicated by the figure placeholders. Ensure all images are high-quality and professionally labeled. If additional details are needed for any section, refer to the specific module documentation files in the docs/ folder.

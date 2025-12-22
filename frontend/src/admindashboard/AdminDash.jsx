@@ -6,14 +6,15 @@ import axios from "axios";
 import CertificateRequests from "./CertificateRequests";
 import IssuedCertificates from "./IssuedCertificates";
 import StudentManagement from "./StudentManagement";
-import CertificateTemplates from "./CertificateTemplates";
+import ChangePassword from "./ChangePassword";
+// CertificateTemplates removed per request
 
 const MENU_ITEMS = [
   "Dashboard",
   "Certificate Requests",
   "Issued Certificates",
-  "Certificate Templates",
   "Student Management",
+  "Change Password",
 ];
 
 export default function AdminDashboard() {
@@ -30,68 +31,92 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     // Fetch certificate stats
-    axios.get("http://localhost:5000/api/certificate/stats", { withCredentials: true })
+    axios.get("http://10.55.47.47:5000/api/certificate/stats", { withCredentials: true })
       .then(res => setStats(res.data))
       .catch(() => {});
 
     // Fetch recent activity (last 5-10 records)
-    axios.get("http://localhost:5000/api/certificate/recent", { withCredentials: true })
+    axios.get("http://10.55.47.47:5000/api/certificate/recent", { withCredentials: true })
       .then(res => setActivityData(res.data))
       .catch(() => {});
   }, []);
 
   // Set active menu based on current URL (so direct routes can open specific tab)
   useEffect(() => {
-    if (location.pathname.includes('certificate-requests')) {
-      setActiveMenu('Certificate Requests');
-    } else if (location.pathname.includes('issued')) {
-      setActiveMenu('Issued Certificates');
-    } else if (location.pathname.includes('templates')) {
-      setActiveMenu('Certificate Templates');
-    } else if (location.pathname.includes('student-details')) {
-      setActiveMenu('Student Management');
-    } else if (location.pathname === '/admin' || location.pathname === '/admin/') {
+    if (location.pathname === '/admin' || location.pathname === '/admin/') {
       setActiveMenu('Dashboard');
+    } else if (location.pathname.includes('certificate-requests')) {
+      setActiveMenu('Certificate Requests');
+    } else if (location.pathname.includes('issued-certificates')) {
+      setActiveMenu('Issued Certificates');
+    } else if (location.pathname.includes('student-management')) {
+      setActiveMenu('Student Management');
+    } else if (location.pathname.includes('change-password')) {
+      setActiveMenu('Change Password');
     }
   }, [location.pathname]);
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      navigate("/login");
+      // Call backend logout to destroy session
+      await fetch('http://10.55.47.47:5000/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      });
     } catch (error) {
       console.error("Error during logout:", error);
-      // Even if logout fails on server, clear local storage and redirect for UX
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      navigate("/login");
+    } finally {
+      // Always clear local storage and redirect
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Clear browser history to prevent back button access
+      window.history.pushState(null, null, '/login');
+      window.history.forward();
+      
+      navigate("/login", { replace: true });
     }
   };
 
   return (
     <div className="admin-container">
       {/* Sidebar */}
-      <div className="admin-menu">
+      <div className="admin-menu" role="navigation" aria-label="Admin Navigation">
         <div className="menu-title">Admin Dashboard</div>
         <ul>
           {MENU_ITEMS.map((item) => (
-            <li
-              key={item}
-              className={activeMenu === item ? "active" : ""}
-              onClick={() => setActiveMenu(item)}
-            >
-              {item}
+            <li key={item}>
+              <button
+                className={activeMenu === item ? "active" : ""}
+                onClick={() => {
+                  if (item === "Dashboard") {
+                    navigate('/admin');
+                  } else if (item === "Change Password") {
+                    navigate('/admin/change-password');
+                  } else if (item === "Certificate Requests") {
+                    navigate('/admin/certificate-requests');
+                  } else if (item === "Issued Certificates") {
+                    navigate('/admin/issued-certificates');
+                  } else if (item === "Student Management") {
+                    navigate('/admin/student-management');
+                  } else {
+                    setActiveMenu(item);
+                  }
+                }}
+              >
+                {item}
+              </button>
             </li>
           ))}
-          <li className="logout" onClick={handleLogout}>Logout</li>
+          <li>
+            <button className="logout" onClick={handleLogout}>Logout</button>
+          </li>
         </ul>
       </div>
 
       {/* Main Dashboard Area */}
-      <div className="admin-main">
+      <div className="admin-main" role="main">
         {activeMenu === "Dashboard" && (
           <div className="dashboard">
             <h1>Dashboard</h1>
@@ -143,7 +168,7 @@ export default function AdminDashboard() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} style={{ textAlign: 'center', color: '#ccc' }}>
+                      <td colSpan={6} className="no-data-cell">
                         No activity found.
                       </td>
                     </tr>
@@ -156,9 +181,9 @@ export default function AdminDashboard() {
         {activeMenu === "Certificate Requests" && <CertificateRequests />}
   {/* Request Details removed */}
         {activeMenu === "Issued Certificates" && <IssuedCertificates />}
-        {activeMenu === "Certificate Templates" && <CertificateTemplates />}
   {/* Certificate Templates and QR Verification Logs removed */}
         {activeMenu === "Student Management" && <StudentManagement />}
+        {activeMenu === "Change Password" && <ChangePassword />}
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import './ForgotPass.css';
 
 function ForgotPass() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -14,13 +16,28 @@ function ForgotPass() {
   const [otpVerified, setOtpVerified] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [otpBtnText, setOtpBtnText] = useState("Send OTP");
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const gmailRegex = /^[^\s@]+@gmail\.com$/;
+    return emailRegex.test(email) && gmailRegex.test(email);
+  };
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
+    if (!email) {
+      setError('Email is required.');
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError('Invalid email id. Only Gmail addresses are allowed.');
+      return;
+    }
     try {
-      const response = await fetch('http://localhost:5000/api/forgot-password/send-otp', {
+      const response = await fetch('http://10.55.47.47:5000/api/forgot-password/send-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,13 +46,14 @@ function ForgotPass() {
       });
       const data = await response.json();
       if (response.ok) {
-        setMessage(data.message);
-        setOtpSent(true);
+        setError(data.message);
+        setOtpSent(false);
+        setOtpBtnText("Resend OTP");
       } else {
-        setError(data.error || data.message);
+        setError('Failed to send OTP. Please try again.');
       }
     } catch (err) {
-      setError('Server error. Please try again later.');
+      setError('Network error. Please check your connection and try again.');
     }
   };
 
@@ -44,7 +62,7 @@ function ForgotPass() {
     setError('');
     setMessage('');
     try {
-      const response = await fetch('http://localhost:5000/api/forgot-password/verify-otp', {
+      const response = await fetch('http://10.55.47.47:5000/api/forgot-password/verify-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,10 +74,10 @@ function ForgotPass() {
         setMessage(data.message);
         setOtpVerified(true);
       } else {
-        setError(data.error || data.message);
+        setError('Invalid OTP. Please try again.');
       }
     } catch (err) {
-      setError('Server error. Please try again later.');
+      setError('Network error. Please check your connection and try again.');
     }
   };
 
@@ -71,23 +89,27 @@ function ForgotPass() {
       setError('Passwords do not match.');
       return;
     }
+    // eslint-disable-next-line no-useless-escape
+    if (!/(?=.*\d)(?=.*[@#$%^&*!])/.test(newPassword)) {
+      setError('Password must contain at least one number and one symbol (@, #, $, %, ^, &, *, !).');
+      return;
+    }
     try {
-      const response = await fetch('http://localhost:5000/api/forgot-password/reset-password', {
+      const response = await fetch('http://10.55.47.47:5000/api/forgot-password/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, otp, newPassword }),
       });
-      const data = await response.json();
+
       if (response.ok) {
-        setMessage(data.message);
-        // Optionally redirect to login page
+        navigate('/passwordresetsuccess');
       } else {
-        setError(data.error || data.message);
+        setError('Failed to reset password. Please try again.');
       }
     } catch (err) {
-      setError('Server error. Please try again later.');
+      setError('Network error. Please check your connection and try again.');
     }
   };
 
@@ -102,6 +124,9 @@ function ForgotPass() {
   return (
     <div className="login-bg">
       <div className="forgot-password-container">
+        <button className="back-button" onClick={() => navigate(-1)} title="Go back" style={{ padding: "6px 12px", fontSize: "14px", width: "auto" }}>
+           Back
+        </button>
         <h2 className="forgot-password-title">Forgot Password</h2>
         <form onSubmit={(e) => {
           e.preventDefault();
@@ -124,11 +149,9 @@ function ForgotPass() {
                 required
                 disabled={otpSent}
               />
-              {!otpSent && (
-                <button type="button" className="send-otp-btn" onClick={handleSendOtp}>
-                  Send OTP
-                </button>
-              )}
+              <button type="button" className="send-otp-btn" onClick={handleSendOtp}>
+                {otpBtnText}
+              </button>
             </div>
           </div>
 
@@ -156,7 +179,11 @@ function ForgotPass() {
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
                   />
-                  <span className="password-toggle-icon" onClick={toggleNewPasswordVisibility}>
+                  <span className="password-toggle-icon" onClick={toggleNewPasswordVisibility}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={showNewPassword ? "Hide password" : "Show password"}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { toggleNewPasswordVisibility(); e.preventDefault(); } }}>
                     <FontAwesomeIcon icon={showNewPassword ? faEyeSlash : faEye} />
                   </span>
                 </div>
@@ -171,7 +198,11 @@ function ForgotPass() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                   />
-                  <span className="password-toggle-icon" onClick={toggleConfirmPasswordVisibility}>
+                  <span className="password-toggle-icon" onClick={toggleConfirmPasswordVisibility}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { toggleConfirmPasswordVisibility(); e.preventDefault(); } }}>
                     <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
                   </span>
                 </div>

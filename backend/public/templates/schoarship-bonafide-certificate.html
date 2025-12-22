@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scholarship Bonafide Certificate</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #e5e5e5;
+      font-family: "Times New Roman", serif;
+    }
+
+    /* A4 page with position relative for absolute footer positioning */
+    .page {
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto;
+      background: #fff;
+      padding: 10mm 15mm 25mm 15mm;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: avoid;
+    }
+
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+
+    /* header logo + college name centered */
+    .header {
+      text-align: center;
+      margin-bottom: 4mm;
+    }
+
+    .logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid #000;
+      margin: 0 auto 4mm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .logo img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 50%;
+    }
+
+    .college-line1 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .college-line2 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .college-line3 {
+      font-size: 11px;
+    }
+
+    /* horizontal line between college details and meta block */
+    .divider {
+      border-top: 1px solid #000;
+      margin: 4mm 0 3mm;
+    }
+
+    /* block that holds left meta (3 rows) and right QR, equal height */
+    .meta-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      font-size: 12px;
+      column-gap: 10mm;
+      margin-bottom: 6mm;
+    }
+
+    .meta-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .meta-item {
+      margin-bottom: 3mm;
+    }
+
+    .meta-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* QR takes same height as meta-left via flexbox */
+    .meta-right {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .qr-box {
+      width: 80px;
+      border: 1px solid #000;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 3mm 0 2mm;
+      text-decoration: underline;
+    }
+
+    .content {
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: justify;
+      margin: 0;
+    }
+
+    .purpose {
+      margin-top: 3mm;
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    .sign-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10mm;
+      font-size: 11px;
+    }
+
+    .sign-cell {
+      text-align: center;
+      width: 32%;
+    }
+
+    .sign-label {
+      font-weight: 600;
+    }
+
+    /* Footer fixed at bottom */
+    .footer {
+      position: absolute;
+      bottom: 0;
+      left: 18mm;
+      right: 18mm;
+      padding: 6mm 0;
+      border-top: 1px solid #000;
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .footer a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Center logo + college name -->
+    <div class="header">
+      <div class="logo">
+        <img src="/assets/MGU_LOGO.png" alt="College Logo" />
+      </div>
+      <div class="college-line1">UNIVERSITY COLLEGE OF ENGINEERING &amp; TECHNOLOGY</div>
+      <div class="college-line2">MAHATMA GANDHI UNIVERSITY</div>
+      <div class="college-line3">Nalgonda - 508254, T.S., India</div>
+    </div>
+
+    <!-- single line between header and meta -->
+    <div class="divider"></div>
+
+    <!-- Meta block: left (Sl.No, Date, Roll) vs right (QR) -->
+    <div class="meta-block">
+      <div class="meta-left">
+        <div class="meta-item">
+          Sl. No: {{SL_NO}}
+        </div>
+        <div class="meta-item">
+          Date: {{DATE}}
+        </div>
+        <div class="meta-item">
+          Roll No: {{ROLL_NO}}
+        </div>
+      </div>
+
+      <div class="meta-right">
+        <div class="qr-box">
+          <img src="{{QR_CODE_BASE64}}" alt="QR Code" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="title">BONAFIDE CERTIFICATE</div>
+
+    <!-- Body text -->
+    <div class="content">
+      This is to certify that {{STUDENT_NAME}},
+      {{SO_DO}} {{PARENT_NAME}} is a bonafide student of this College.
+      {{HE_SHE}} is presently studying {{BRANCH}} {{COURSE}}, {{PRESENT_YEAR}} year
+      during the Academic year {{ACADEMIC_YEAR}} in University College of
+      Engineering &amp; Technology, Mahatma Gandhi University, Nalgonda.
+      Reference ID: {{REFERENCE_NUM}}
+    </div>
+
+    <div class="purpose">
+      This certificate is issued for the purpose of submitting to scholarship.
+    </div>
+    <br></br>
+    <!-- Signatures (flows naturally with content) -->
+    <div class="sign-row">
+      <div class="sign-cell">
+        <div class="sign-label">Candidate Signature</div>
+      </div>
+      <div class="sign-cell">
+        <div class="sign-label">HoD Signature</div>
+      </div>
+      <div class="sign-cell">
+        <div class="sign-label">Principal Signature</div>
+      </div>
+    </div>
+
+    <!-- Footer fixed at bottom -->
+    <div class="footer">
+      Printed by University College of Engineering &amp; Technology, Mahatma Gandhi University, Nalgonda. | <a href="https://www.mgunalgonda.com">www.mgunalgonda.com</a>
+    </div>
+
+  </div>
+</body>
+</html>

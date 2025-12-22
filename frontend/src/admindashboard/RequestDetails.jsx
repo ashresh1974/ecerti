@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './AdminDash.css';
 
 const REJECT_REASONS = [
-  'Incomplete documents',
-  'Invalid details',
+  'Invalid Details',
   'Duplicate request',
   'Other'
 ];
@@ -13,23 +12,70 @@ const REJECT_REASONS = [
 function RequestDetails() {
   const { reference_num } = useParams();
   const [details, setDetails] = useState(null);
-  const [rejectReason, setRejectReason] = useState(REJECT_REASONS[0]);
+  const [rejectReason, setRejectReason] = useState('');
+  const [customReason, setCustomReason] = useState('');
   const [loading, setLoading] = useState(true);
   const [approving, setApproving] = useState(false);
   const [rejecting, setRejecting] = useState(false);
+  const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [rejectError, setRejectError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios.get(`http://localhost:5000/api/certificate/details/${reference_num}`, { withCredentials: true })
+  const fetchDetails = useCallback(() => {
+    axios.get(`http://10.55.47.47:5000/api/certificate/details/${reference_num}`, { withCredentials: true })
       .then(res => {
+        console.log('Details received:', res.data);
         setDetails(res.data);
         setLoading(false);
       })
-      .catch(() => {
+      .catch(err => {
+        console.error('Error fetching details:', err);
         setDetails(null);
         setLoading(false);
       });
   }, [reference_num]);
+
+  const fetchTemplates = useCallback(() => {
+    axios.get('http://10.55.47.47:5000/api/templates/', { withCredentials: true })
+      .then(res => {
+        const list = Array.isArray(res.data) ? res.data : res.data.data || [];
+        setTemplates(list);
+      })
+      .catch(err => {
+        console.error('Error loading templates:', err);
+        setTemplates([]);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchDetails();
+    fetchTemplates();
+  }, [reference_num, fetchDetails, fetchTemplates]);
+
+  // When both details and templates are loaded, pick the appropriate template
+  useEffect(() => {
+    if (!details || templates.length === 0) return;
+
+    const type = (details.certificate_type || '').toLowerCase();
+
+    // Prefer a template that matches scholarship, conduct, or bonafide keywords
+    let match = null;
+    if (type.includes('scholar')) {
+      match = templates.find(t => (t.certificate_type || '').toLowerCase().includes('scholar'));
+    }
+    if (!match && type.includes('conduct')) {
+      match = templates.find(t => (t.certificate_type || '').toLowerCase().includes('conduct'));
+    }
+    if (!match && (type.includes('bonafide') || type.includes('bonafide certificate') || type.includes('bonafide'))) {
+      match = templates.find(t => (t.certificate_type || '').toLowerCase().includes('bonafide'));
+    }
+
+    // Fallback to first template if nothing matched
+    if (!match) match = templates[0];
+
+    if (match) setSelectedTemplate(match.id);
+  }, [details, templates]);
 
   const handleApprove = async () => {
     if (!window.confirm('Are you sure you want to approve this certificate? A PDF will be generated.')) {
@@ -38,7 +84,11 @@ function RequestDetails() {
     
     setApproving(true);
     try {
-      await axios.post(`http://localhost:5000/api/certificate/approve/${reference_num}`, {}, { withCredentials: true });
+      await axios.post(
+        `http://10.55.47.47:5000/api/certificate/approve/${reference_num}`,
+        { template_id: selectedTemplate },
+        { withCredentials: true }
+      );
       alert('Certificate approved! PDF has been generated.');
       navigate('/admin/certificate-requests');
     } catch (error) {
@@ -48,13 +98,27 @@ function RequestDetails() {
   };
 
   const handleReject = async () => {
+    // Validate that a reason is selected
+    if (!rejectReason) {
+      setRejectError('Please select a rejection reason');
+      return;
+    }
+
+    // Validate custom reason if "Other" is selected
+    if (rejectReason === 'Other' && !customReason.trim()) {
+      setRejectError('Please provide a custom rejection reason');
+      return;
+    }
+
     if (!window.confirm('Are you sure you want to reject this certificate?')) {
       return;
     }
     
     setRejecting(true);
+    setRejectError('');
     try {
-      await axios.post(`http://localhost:5000/api/certificate/reject/${reference_num}`, { remark: rejectReason }, { withCredentials: true });
+      const finalReason = rejectReason === 'Other' ? customReason : rejectReason;
+      await axios.post(`http://10.55.47.47:5000/api/certificate/reject/${reference_num}`, { remark: finalReason }, { withCredentials: true });
       alert('Certificate rejected!');
       navigate('/admin/certificate-requests');
     } catch (error) {
@@ -75,133 +139,155 @@ function RequestDetails() {
     <div className="dashboard">
       <h1>Certificate Verification</h1>
       
-      {/* Certificate Details */}
-      <div style={{ marginBottom: '30px' }}>
-        <h2 style={{ color: '#2051a7', marginBottom: '15px' }}>📜 Certificate Details</h2>
-        <div className="stud-card" style={{ maxWidth: '100%', background: '#f9f9f9', border: '1px solid #e0e0e0' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div className="stud-field">
-              <label>Reference No:</label>
-              <strong>{details.reference_num}</strong>
+      {/* Certificate Details Section */}
+      <div className="details-section">
+        <h2 className="details-section-title">📜 Certificate Details</h2>
+        <div className="details-grid">
+          <div className="detail-item">
+            <label>Reference No:</label>
+            <span>{details.reference_num}</span>
+          </div>
+          <div className="detail-item">
+            <label>Serial No:</label>
+            <span>{details.serial_num}</span>
+          </div>
+          <div className="detail-item">
+            <label>Certificate Type:</label>
+            <span>{details.certificate_type}</span>
+          </div>
+          <div className="detail-item">
+            <label>Requested Date:</label>
+            <span>{new Date(details.requested_date).toLocaleString()}</span>
+          </div>
+          <div className="detail-item">
+            <label>Duration:</label>
+            <span>{details.duration || '-'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Remark:</label>
+            <span>{details.remark || '-'}</span>
+          </div>
+          {details.status === 'rejected' && details.remark && (
+            <div className="detail-item full-width">
+              <span className="note-reject">📌 Note: {details.remark}</span>
             </div>
-            <div className="stud-field">
-              <label>Serial No:</label>
-              <strong>{details.serial_num}</strong>
-            </div>
-            <div className="stud-field">
-              <label>Certificate Type:</label>
-              <strong>{details.certificate_type}</strong>
-            </div>
-            <div className="stud-field">
-              <label>Status:</label>
-              <strong style={{ color: details.status === 'pending' ? '#ff9800' : details.status === 'verified' ? '#4caf50' : '#f44336' }}>
-                {details.status?.toUpperCase()}
-              </strong>
-            </div>
-            <div className="stud-field">
-              <label>Requested Date:</label>
-              <strong>{new Date(details.requested_date).toLocaleString()}</strong>
-            </div>
-            {details.issued_date && (
-              <div className="stud-field">
-                <label>Issued Date:</label>
-                <strong>{new Date(details.issued_date).toLocaleString()}</strong>
-              </div>
-            )}
-            <div className="stud-field">
-              <label>Duration:</label>
-              <strong>{details.duration || '-'}</strong>
-            </div>
-            <div className="stud-field">
-              <label>Remark:</label>
-              <strong>{details.remark || '-'}</strong>
-            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Student Details Section */}
+      <div className="details-section">
+        <h2 className="details-section-title">👤 Student Details</h2>
+        <div className="details-grid">
+          <div className="detail-item">
+            <label>Name:</label>
+            <span>{details.full_name}</span>
+          </div>
+          <div className="detail-item">
+            <label>Roll Number:</label>
+            <span>{details.roll_number}</span>
+          </div>
+          <div className="detail-item">
+            <label>Course:</label>
+            <span>{details.course || '-'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Parent Name:</label>
+            <span>{details.parent_name || '-'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Present Year:</label>
+            <span>{details.present_year || '-'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Mobile Number:</label>
+            <span>{details.phone_number || '-'}</span>
           </div>
         </div>
       </div>
 
-      {/* Student Details */}
-      <div style={{ marginBottom: '30px' }}>
-        <h2 style={{ color: '#2051a7', marginBottom: '15px' }}>👤 Student Details</h2>
-        <div className="stud-card" style={{ maxWidth: '100%', background: '#f9f9f9', border: '1px solid #e0e0e0' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div className="stud-field">
-              <label>Name:</label>
-              <strong>{details.full_name}</strong>
-            </div>
-            <div className="stud-field">
-              <label>Roll Number:</label>
-              <strong>{details.roll_number}</strong>
-            </div>
-            <div className="stud-field">
-              <label>Course:</label>
-              <strong>{details.course || '-'}</strong>
-            </div>
-            <div className="stud-field">
-              <label>Branch:</label>
-              <strong>{details.branch || '-'}</strong>
-            </div>
-            <div className="stud-field">
-              <label>Parent Name:</label>
-              <strong>{details.parent_name || '-'}</strong>
-            </div>
-            <div className="stud-field">
-              <label>QR Code:</label>
-              <strong style={{ wordBreak: 'break-all', fontSize: '0.9em' }}>{details.qr_code?.substring(0, 20)}...</strong>
-            </div>
+      {details.previousApplications && details.previousApplications.length > 0 && (
+        <div className="details-section">
+          <div className="detail-item full-width">
+            <span className="note-duplicate">
+              This certificate has been applied {details.previousApplications.length} time(s) previously:
+              {details.previousApplications.map((app, idx) => (
+                <span key={app.reference_num}>
+                  {idx > 0 ? ', ' : ' '}Ref {app.reference_num} on {new Date(app.requested_date).toLocaleDateString()}
+                </span>
+              ))}
+            </span>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Action Buttons */}
-      <div className="profile-actions" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '30px' }}>
+      {/* Actions Section */}
+      <div className="actions-section">
+        <button 
+          className="back-button"
+          onClick={() => navigate(-1)}
+          style={{ padding: "6px 12px", fontSize: "14px", width: "auto" }}
+        >
+          ← Back
+        </button>
+        
+        {rejectError && (
+          <div className="reject-error-message">
+            ⚠️ {rejectError}
+          </div>
+        )}
+        
+        <div className="reject-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <select
+            className="reject-dropdown"
+            value={rejectReason} 
+            onChange={e => {
+              setRejectReason(e.target.value);
+              setRejectError('');
+            }}
+            disabled={rejecting || details.status === 'verified'}
+          >
+            <option value="">-- Select reason to reject --</option>
+            {REJECT_REASONS.map((reason) => (
+              <option key={reason} value={reason}>{reason === 'Other' ? 'Type reason here' : reason}</option>
+            ))}
+          </select>
+
+          {rejectReason === 'Other' && (
+            <input 
+              type="text"
+              className="reject-message"
+              placeholder="Type reason..."
+              value={customReason}
+              onChange={e => setCustomReason(e.target.value)}
+              disabled={rejecting || details.status === 'verified'}
+              style={{ flex: 1 }}
+            />
+          )}
+
+          <button 
+            className="cancel-btn" 
+            onClick={handleReject}
+            disabled={rejecting || details.status === 'verified' || !rejectReason || (rejectReason === 'Other' && !customReason)}
+          >
+            {rejecting ? 'Processing...' : '✗ Reject'}
+          </button>
+        </div>
+
         <button 
           className="save-btn" 
           onClick={handleApprove}
           disabled={approving || details.status === 'verified'}
-          style={{ 
-            opacity: approving || details.status === 'verified' ? 0.6 : 1,
-            cursor: approving || details.status === 'verified' ? 'not-allowed' : 'pointer'
-          }}
         >
           {approving ? 'Processing...' : '✓ Approve & Generate PDF'}
         </button>
-        
-        <select 
-          value={rejectReason} 
-          onChange={e => setRejectReason(e.target.value)}
-          style={{ 
-            padding: '10px 15px',
-            borderRadius: '4px',
-            border: '1px solid #ddd',
-            background: '#fff',
-            cursor: 'pointer'
-          }}
-          disabled={rejecting || details.status === 'verified'}
-        >
-          {REJECT_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
-        </select>
-
-        <button 
-          className="cancel-btn" 
-          onClick={handleReject}
-          disabled={rejecting || details.status === 'verified'}
-          style={{ 
-            opacity: rejecting || details.status === 'verified' ? 0.6 : 1,
-            cursor: rejecting || details.status === 'verified' ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {rejecting ? 'Processing...' : '✗ Reject'}
-        </button>
-
-        <button 
-          className="edit-btn"
-          onClick={() => navigate(-1)}
-          style={{ marginLeft: 'auto' }}
-        >
-          ← Back
-        </button>
       </div>
+
+      {details.status === 'verified' && details.pdf_path && (
+        <div className="view-certificate">
+          <button className="edit-btn" onClick={() => window.open(`/certificates/${details.pdf_path}`, '_blank')}>View Certificate</button>
+        </div>
+      )}
     </div>
   );
 }

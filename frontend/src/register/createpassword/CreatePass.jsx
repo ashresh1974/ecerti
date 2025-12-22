@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import './CreatePass.css';
 
 function CreatePass() {
@@ -53,12 +54,17 @@ function CreatePass() {
       setMessage('Passwords do not match.');
       return;
     }
+    // eslint-disable-next-line no-useless-escape
+    if (!/(?=.*\d)(?=.*[@#$%^&*!])/.test(password)) {
+      setMessage('Password must contain at least one number and one symbol (@, #, $, %, ^, &, *, !).');
+      return;
+    }
     if (/\s/.test(username) || username !== username.toLowerCase()) {
       setMessage('Username must be lowercase and contain no spaces.');
       return;
     }
     try {
-      const response = await axios.post('http://localhost:5000/api/register', {
+      const response = await axios.post('http://10.55.47.47:5000/api/register', {
         fullName,
         roll,
         course,
@@ -113,8 +119,9 @@ function CreatePass() {
               tabIndex={0}
               role="button"
               aria-label={showPassword ? "Hide password" : "Show password"}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { setShowPassword(!showPassword); e.preventDefault(); } }}
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
             </span>
           </div>
           <div className="input-group password-input-container">
@@ -133,8 +140,9 @@ function CreatePass() {
               tabIndex={0}
               role="button"
               aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { setShowConfirmPassword(!showConfirmPassword); e.preventDefault(); } }}
             >
-              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
             </span>
           </div>
           {message && <p className="message">{message}</p>}

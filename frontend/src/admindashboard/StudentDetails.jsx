@@ -13,7 +13,7 @@ function StudentDetails() {
   useEffect(() => {
     const fetchStudentDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/admin/student/${id}`, { withCredentials: true });
+        const response = await axios.get(`http://10.55.47.47:5000/api/admin/student/${id}`, { withCredentials: true });
         setStudent(response.data.student);
       } catch (err) {
         console.error("Error fetching student details:", err);
@@ -52,7 +52,7 @@ function StudentDetails() {
         <p><strong>Email ID:</strong> {student.email_id}</p>
         {/* Add other details as needed, excluding password and id */}
       </div>
-      <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+      <button className="back-button" onClick={() => navigate(-1)} style={{ padding: "6px 12px", fontSize: "14px", width: "auto" }}>Back</button>
     </div>
   );
 }

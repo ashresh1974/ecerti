@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
 import './StudDash.css';
 
 function DownloadCertificates() {
-  const { profile: _profile } = useOutletContext();
   const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,7 +11,7 @@ function DownloadCertificates() {
 
   const fetchVerifiedCertificates = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/certificate/student', {
+      const response = await fetch('http://10.55.47.47:5000/api/certificate/student', {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -40,9 +38,8 @@ function DownloadCertificates() {
     if (!cert.pdf_path) {
       return alert('Certificate PDF not available yet.');
     }
-    // Open the stored PDF served by the backend's static files route
-    const openUrl = `/certificates/${cert.pdf_path}`;
-    window.open(openUrl, '_blank');
+    // Open the PDF directly from the backend static folder
+    window.open(`http://10.55.47.47:5000/certificates/${cert.reference_num}.pdf`, '_blank');
   };
 
   if (loading) {
@@ -123,7 +120,7 @@ function DownloadCertificates() {
                       onMouseEnter={(e) => cert.pdf_path && (e.currentTarget.style.background = '#0d2c6f')}
                       onMouseLeave={(e) => (e.currentTarget.style.background = '#2051a7')}
                     >
-                      { !cert.pdf_path ? 'Unavailable' : '👁️ View' }
+                      { !cert.pdf_path ? 'Unavailable' : 'View' }
                     </button>
                   </td>
                 </tr>

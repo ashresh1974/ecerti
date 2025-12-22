@@ -1,32 +1,27 @@
+/* Import shared styles */
+@import '../styles/shared.css';
 
+/* Student Dashboard specific styles */
 .admin-container {
   display: flex;
   min-height: 100vh;
-  background: #f4f8fc;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--bg);
 }
 
-
 .admin-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 220px;
-  background: linear-gradient(160deg, #2051a7 95%, #f4f8fc 100%);
-  color: #fff;
-  padding: 28px 0 0 0;
-  border-right: 1px solid #e0eafc;
-  z-index: 100;
+  width: 250px;
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  min-height: 100vh;
 }
 
 .menu-title {
-  font-size: 1.3em;
-  font-weight: bold;
+  font-size: 1.25rem;
+  font-weight: 700;
   text-align: center;
   margin-bottom: 24px;
-  letter-spacing: 1px;
-  color: #fff;
+  color: #ffffff;
 }
 
 .admin-menu ul {
@@ -35,82 +30,88 @@
   margin: 0;
 }
 
-.admin-menu ul li a {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  padding: 17px 30px;
-}
-
 .admin-menu ul li {
-  cursor: pointer;
-  /* padding: 17px 30px; */ /* Removed as padding is now on the a tag */
-  font-size: 1.05em;
-  font-weight: 500;
-  transition: background 0.16s, color 0.2s;
-  color: #fff;
-  border-bottom: 1px solid rgba(255,255,255,0.09);
+  margin-bottom: 12px;
 }
 
-.admin-menu ul li.active, .admin-menu ul li:hover:not(.logout) {
-  background: #fff;
-  color: #2051a7;
+.admin-menu ul li button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.admin-menu ul li:hover button:not(.logout) {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.admin-menu ul li button.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-left: 4px solid #ffffff;
 }
 
 .logout {
-  margin-top: 60px;
-  color: #d62222 !important;
+  margin-top: 40px;
+  color: var(--danger) !important;
   font-weight: 600;
-  background: none !important;
-  border-bottom: none;
 }
-
 
 .admin-main {
   flex: 1;
-  padding: 38px 48px;
-  margin-left: 220px;
+  padding: 20px;
 }
 
 /* Student Profile card styling */
 .stud-card {
-  background: #f7f9fd;
-  border-radius: 11px;
-  padding: 41px 36px 34px 36px;
-  box-shadow: 0 2px 8px rgba(44, 106, 243, 0.07);
-  max-width: 480px;
-  margin-bottom: 24px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 6px 18px var(--shadow);
+  border: 1px solid var(--border);
+  max-width: 500px;
+  margin-bottom: 20px;
 }
 
 .stud-field {
   display: flex;
   align-items: center;
-  margin-bottom: 24px;
-  font-size: 1.07em;
+  margin-bottom: 16px;
+  font-size: 1rem;
 }
 
 .stud-field label {
-  width: 140px;
-  color: #2051a7;
+  width: 150px;
   font-weight: 600;
-  margin-right: 17px;
+  color: var(--text);
+}
+
+.stud-field span {
+  flex: 1;
+  color: var(--muted);
 }
 
 .stud-field input,
 .stud-select {
   flex: 1;
   padding: 9px 10px;
-  border-radius: 4px;
-  border: 1px solid #c7daf6;
+  border-radius: 6px;
+  border: 1px solid var(--border);
   font-size: 15px;
   background: #fff;
   transition: border-color .2s;
 }
 
-/* Dropdown custom style */
 .stud-select {
   height: 37px;
-  color: #2051a7;
+  color: var(--primary);
   font-weight: 550;
 }
 
@@ -120,117 +121,95 @@
 }
 
 .edit-btn, .save-btn, .cancel-btn {
-  padding: 8px 18px;
-  font-size: 1em;
-  border-radius: 5px;
+  padding: 6px 12px;
+  font-size: 0.85em;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   font-weight: 600;
   margin-left: 10px;
-  transition: background 0.15s;
-  background: #2051a7;
+  transition: all 0.12s;
   color: #fff;
 }
 
-.save-btn {
-  background: #218841;
-}
-.cancel-btn {
-  background: #ce253a;
-}
+.edit-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); }
+.save-btn { background: linear-gradient(135deg, var(--success) 0%, #167a48 100%); }
+.cancel-btn { background: linear-gradient(135deg, var(--danger) 0%, #b2242e 100%); }
 
-.edit-btn:hover { background: #195ba7;}
-.save-btn:hover { background: #1b6740;}
-.cancel-btn:hover { background: #a91424;}
+.edit-btn:hover, .save-btn:hover, .cancel-btn:hover { transform: translateY(-2px); }
 
-.dashboard h1 {
-  font-size: 1.5em;
-  font-weight: 700;
-  color: #2051a7;
-  margin-bottom: 24px;
-}
-
-.stud-content-box {
-  background: #f7fafd;
-  border-radius: 8px;
-  padding: 48px 22px;
-  font-size: 1.15em;
-  color: #17449c;
-  box-shadow: 0 0.5px 3px rgba(44,106,243,0.08);
-  max-width: 480px;
-  margin-bottom: 22px;
-}
-
+/* Apply Certificate Form */
 .apply-cert-form {
-  background: #f7f9fd;
-  border-radius: 12px;
-  padding: 36px 32px 28px 32px;
-  box-shadow: 0 2px 8px rgba(44,106,243,0.07);
-  max-width: 430px;
-  margin: 24px auto 0 auto;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 6px 18px var(--shadow);
+  border: 1px solid var(--border);
+  max-width: 600px;
 }
 
 .apply-cert-form h2 {
-  font-size: 1.4em;
-  color: #2051a7;
-  font-weight: 700;
-  margin-bottom: 26px;
-  letter-spacing: 1px;
-  text-align: left;
+  margin-bottom: 24px;
+  color: var(--primary-dark);
 }
 
-.apply-cert-form form {
-  display: flex;
-  flex-direction: column;
-  gap: 17px;
+.apply-cert-form .form-group {
+  margin-bottom: 20px;
 }
 
 .apply-cert-form label {
-  color: #2051a7;
+  display: block;
+  margin-bottom: 8px;
   font-weight: 600;
-  margin-bottom: 6px;
+  color: var(--text);
 }
 
 .apply-cert-form input,
 .apply-cert-form select {
-  padding: 9px 10px;
-  border-radius: 5px;
-  border: 1px solid #c7daf6;
-  font-size: 15px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
   background: #fff;
-  transition: border-color .18s;
-  font-family: inherit;
 }
 
 .apply-cert-form input:disabled {
-  background: #eaf2fd;
+  background: #f0f6ff;
   color: #808080;
 }
 
 .apply-cert-form button[type="submit"] {
-  margin-top: 22px;
-  padding: 10px 28px;
-  border-radius: 5px;
-  border: none;
-  background: #2051a7;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: #fff;
-  font-size: 1.08em;
-  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 1.5px 4px rgba(44,106,243,0.07);
-  transition: background 0.17s;
+  transition: transform 0.12s ease;
 }
 
 .apply-cert-form button[type="submit"]:hover {
-  background: #17449c;
+  transform: translateY(-1px);
 }
 
-/* Responsive for mobile */
-@media (max-width: 700px) {
-  .apply-cert-form {
-    max-width: 98vw;
-    padding: 18px 7vw 18px 7vw;
-  }
+.success-message {
+  color: var(--success);
+  background-color: rgba(33, 167, 128, 0.1);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: var(--danger);
+  background-color: rgba(231, 76, 60, 0.1);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
 }
 
 .gender-options {
@@ -242,7 +221,7 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  color: #2051a7;
+  color: var(--primary);
   font-weight: 500;
 }
 
@@ -250,4 +229,121 @@
   margin-right: 5px;
   width: auto;
   margin-bottom: 0;
+}
+
+/* Certificate Status Table */
+.status-table-container {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 6px 18px var(--shadow);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.status-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.status-table th,
+.status-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.status-table th {
+  background-color: var(--surface);
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.status-table td {
+  color: var(--text);
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-badge.pending {
+  background-color: var(--warning);
+  color: #fff;
+}
+
+.status-badge.verified {
+  background-color: var(--success);
+  color: #fff;
+}
+
+.status-badge.rejected {
+  background-color: var(--danger);
+  color: #fff;
+}
+
+.rejection-reason-row {
+  background-color: rgba(231,76,60,0.05);
+}
+
+.rejection-note {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.reapply-button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-left: 12px;
+}
+
+.reapply-button:hover {
+  background: var(--primary-dark);
+}
+
+/* No Records */
+.no-records {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted);
+}
+
+.no-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  color: var(--muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-container {
+    flex-direction: column;
+  }
+
+  .admin-menu {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .admin-main {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .stud-card {
+    max-width: 100%;
+  }
+
+  .apply-cert-form {
+    max-width: 100%;
+  }
 }

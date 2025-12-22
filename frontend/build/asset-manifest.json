@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.83ef5c70.css",
+    "main.js": "/static/js/main.22ac5645.js",
+    "static/media/MGU_LOGO.png": "/static/media/MGU_LOGO.ab6938ebd5eb0d7f59f7.png",
+    "index.html": "/index.html",
+    "main.83ef5c70.css.map": "/static/css/main.83ef5c70.css.map",
+    "main.22ac5645.js.map": "/static/js/main.22ac5645.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.83ef5c70.css",
+    "static/js/main.22ac5645.js"
+  ]
+}
