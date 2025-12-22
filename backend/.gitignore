@@ -3,3 +3,5 @@ node_modules
 public/certificates/
 public/qr-codes/
 public/assets/signatures/
+public/assets/
+public/templates/
