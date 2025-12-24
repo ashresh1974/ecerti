@@ -4,7 +4,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      {/* Root App Routes defined in index.js */}
+      {/* Root App Routes defined in index.jsx */}
     </div>
   );
 }
