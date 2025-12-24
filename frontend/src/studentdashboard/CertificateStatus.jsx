@@ -15,7 +15,7 @@ function CertificateStatus() {
 
   const fetchCertificates = async () => {
     try {
-      const response = await fetch('http://10.55.47.47:5000/api/certificate/student', {
+      const response = await fetch('http://localhost:5000/api/certificate/student', {
         method: 'GET',
         credentials: 'include',
         headers: {

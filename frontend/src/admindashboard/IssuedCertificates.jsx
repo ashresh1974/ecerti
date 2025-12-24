@@ -10,7 +10,7 @@ function IssuedCertificates() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://10.55.47.47:5000/api/certificate/issued', { withCredentials: true })
+    axios.get('http://localhost:5000/api/certificate/issued', { withCredentials: true })
       .then(res => setCertificates(res.data))
       .catch(() => setCertificates([]));
   }, []);

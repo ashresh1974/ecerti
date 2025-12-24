@@ -13,7 +13,7 @@ function StudentDetails() {
   useEffect(() => {
     const fetchStudentDetails = async () => {
       try {
-        const response = await axios.get(`http://10.55.47.47:5000/api/admin/student/${id}`, { withCredentials: true });
+        const response = await axios.get(`http://localhost:5000/api/admin/student/${id}`, { withCredentials: true });
         setStudent(response.data.student);
       } catch (err) {
         console.error("Error fetching student details:", err);

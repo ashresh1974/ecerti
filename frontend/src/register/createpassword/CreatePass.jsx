@@ -64,7 +64,7 @@ function CreatePass() {
       return;
     }
     try {
-      const response = await axios.post('http://10.55.47.47:5000/api/register', {
+      const response = await axios.post('http://localhost:5000/api/register', {
         fullName,
         roll,
         course,

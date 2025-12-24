@@ -13,7 +13,7 @@ function VerifyCertificate() {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://10.55.47.47:5000/api/certificate/verify/${reference_num}`
+        `http://localhost:5000/api/certificate/verify/${reference_num}`
       );
       const data = await response.json();
 

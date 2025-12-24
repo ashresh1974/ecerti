@@ -17,7 +17,7 @@ const ProtectedRouteAdmin = ({ children }) => {
 
       // Validate session with backend
       try {
-        const response = await fetch('http://10.55.47.47:5000/api/me', {
+        const response = await fetch('http://localhost:5000/api/me', {
           method: 'GET',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' }

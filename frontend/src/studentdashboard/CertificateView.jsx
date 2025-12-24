@@ -15,7 +15,7 @@ function CertificateView() {
         setLoading(true);
         // Load the PDF directly from the /certificates folder using the reference number
         // No API call needed - just use the static file
-        const directPath = `http://10.55.47.47:5000/certificates/${reference_num}.pdf`;
+        const directPath = `http://localhost:5000/certificates/${reference_num}.pdf`;
         setPdfPath(directPath);
         setLoading(false);
       } catch (err) {

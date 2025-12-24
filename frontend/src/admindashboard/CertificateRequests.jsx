@@ -9,7 +9,7 @@ function CertificateRequests() {
   const navigate = useNavigate();
 
   const fetchRequests = useCallback(() => {
-    axios.get('http://10.55.47.47:5000/api/certificate/recent', { withCredentials: true })
+    axios.get('http://localhost:5000/api/certificate/recent', { withCredentials: true })
       .then(res => setRequests(res.data))
       .catch(err => {
         console.error('Error fetching certificate requests:', err);
@@ -73,7 +73,7 @@ function CertificateRequests() {
                       req.pdf_path ? (
                         <button
                           className="edit-btn"
-                          onClick={() => window.open(`http://10.55.47.47:5000/certificates/${req.reference_num}.pdf`, '_blank')}
+                          onClick={() => window.open(`http://localhost:5000/certificates/${req.reference_num}.pdf`, '_blank')}
                         >
                           View
                         </button>

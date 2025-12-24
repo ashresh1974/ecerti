@@ -47,7 +47,7 @@ export default function Register() {
     if (!isValid) return;
     setOtpLoading(true);
     try {
-      const response = await fetch('http://10.55.47.47:5000/api/register/send-otp', {
+      const response = await fetch('http://localhost:5000/api/register/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -72,7 +72,7 @@ export default function Register() {
     setMsg("");
     setOtpError("");
     try {
-      const response = await fetch('http://10.55.47.47:5000/api/register/verify-otp', {
+      const response = await fetch('http://localhost:5000/api/register/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),

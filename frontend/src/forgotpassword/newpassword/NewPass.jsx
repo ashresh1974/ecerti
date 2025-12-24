@@ -42,7 +42,7 @@ function NewPass() {
     }
 
     try {
-      const response = await fetch('http://10.55.47.47:5000/api/forgot-password/reset-password', {
+      const response = await fetch('http://localhost:5000/api/forgot-password/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -23,7 +23,7 @@ function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://10.55.47.47:5000/api/login', {
+      const response = await axios.post('http://localhost:5000/api/login', {
         email: username,
         password,
       }, { withCredentials: true });

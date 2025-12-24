@@ -31,12 +31,12 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     // Fetch certificate stats
-    axios.get("http://10.55.47.47:5000/api/certificate/stats", { withCredentials: true })
+    axios.get("http://localhost:5000/api/certificate/stats", { withCredentials: true })
       .then(res => setStats(res.data))
       .catch(() => {});
 
     // Fetch recent activity (last 5-10 records)
-    axios.get("http://10.55.47.47:5000/api/certificate/recent", { withCredentials: true })
+    axios.get("http://localhost:5000/api/certificate/recent", { withCredentials: true })
       .then(res => setActivityData(res.data))
       .catch(() => {});
   }, []);
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
   const handleLogout = async () => {
     try {
       // Call backend logout to destroy session
-      await fetch('http://10.55.47.47:5000/api/logout', {
+      await fetch('http://localhost:5000/api/logout', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }

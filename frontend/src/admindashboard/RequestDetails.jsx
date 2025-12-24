@@ -23,7 +23,7 @@ function RequestDetails() {
   const navigate = useNavigate();
 
   const fetchDetails = useCallback(() => {
-    axios.get(`http://10.55.47.47:5000/api/certificate/details/${reference_num}`, { withCredentials: true })
+    axios.get(`http://localhost:5000/api/certificate/details/${reference_num}`, { withCredentials: true })
       .then(res => {
         console.log('Details received:', res.data);
         setDetails(res.data);
@@ -37,7 +37,7 @@ function RequestDetails() {
   }, [reference_num]);
 
   const fetchTemplates = useCallback(() => {
-    axios.get('http://10.55.47.47:5000/api/templates/', { withCredentials: true })
+    axios.get('http://localhost:5000/api/templates/', { withCredentials: true })
       .then(res => {
         const list = Array.isArray(res.data) ? res.data : res.data.data || [];
         setTemplates(list);
@@ -85,7 +85,7 @@ function RequestDetails() {
     setApproving(true);
     try {
       await axios.post(
-        `http://10.55.47.47:5000/api/certificate/approve/${reference_num}`,
+        `http://localhost:5000/api/certificate/approve/${reference_num}`,
         { template_id: selectedTemplate },
         { withCredentials: true }
       );
@@ -118,7 +118,7 @@ function RequestDetails() {
     setRejectError('');
     try {
       const finalReason = rejectReason === 'Other' ? customReason : rejectReason;
-      await axios.post(`http://10.55.47.47:5000/api/certificate/reject/${reference_num}`, { remark: finalReason }, { withCredentials: true });
+      await axios.post(`http://localhost:5000/api/certificate/reject/${reference_num}`, { remark: finalReason }, { withCredentials: true });
       alert('Certificate rejected!');
       navigate('/admin/certificate-requests');
     } catch (error) {

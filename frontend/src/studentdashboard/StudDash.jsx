@@ -47,7 +47,7 @@ function StudDash() {
       }
 
       try {
-        const response = await fetch(`http://10.55.47.47:5000/api/user/details?id=${userId}`, {
+        const response = await fetch(`http://localhost:5000/api/user/details?id=${userId}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ function StudDash() {
   const handleLogout = async () => {
     try {
       // Call backend logout to destroy session
-      await fetch('http://10.55.47.47:5000/api/logout', {
+      await fetch('http://localhost:5000/api/logout', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }

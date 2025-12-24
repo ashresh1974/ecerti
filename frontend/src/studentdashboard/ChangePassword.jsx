@@ -19,7 +19,7 @@ function ChangePassword() {
     setMessage('');
 
     try {
-      await axios.put('http://10.55.47.47:5000/api/user/change-password', {
+      await axios.put('http://localhost:5000/api/user/change-password', {
         currentPassword,
         newPassword,
         confirmPassword,
