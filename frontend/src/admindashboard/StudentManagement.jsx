@@ -14,7 +14,7 @@ function StudentManagement() {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/students", { withCredentials: true });
+        const response = await axios.get("${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/admin/students", { withCredentials: true });
         setStudents(response.data.students);
       } catch (err) {
         console.error("Error fetching students:", err);

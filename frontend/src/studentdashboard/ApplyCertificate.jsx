@@ -35,7 +35,7 @@ function ApplyCertificate() {
     const fetchExisting = async () => {
       if (!referenceNum) return;
       try {
-        const res = await fetch(`http://localhost:5000/api/certificate/details/${referenceNum}`, {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/certificate/details/${referenceNum}`, {
           method: 'GET',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' }
@@ -75,14 +75,14 @@ function ApplyCertificate() {
     try {
       if (referenceNum) {
         // Re-apply (update existing application and set to pending)
-        const response = await axios.post(`http://localhost:5000/api/certificate/reapply/${referenceNum}`, applicationData, { withCredentials: true });
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/certificate/reapply/${referenceNum}`, applicationData, { withCredentials: true });
         if (response.status === 200) {
           alert('Re-application submitted; status set to pending.');
           // redirect back to status page
           window.location.href = '/studentdashboard/certificate-status';
         }
       } else {
-        const response = await axios.post("http://localhost:5000/api/certificate/apply", applicationData, { withCredentials: true });
+        const response = await axios.post("${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/certificate/apply", applicationData, { withCredentials: true });
         if (response.status === 201) {
           alert("Certificate application submitted successfully!");
           setType('');

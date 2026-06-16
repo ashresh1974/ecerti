@@ -13,7 +13,7 @@ function VerifyCertificate() {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5000/api/certificate/verify/${reference_num}`
+        `${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/certificate/verify/${reference_num}`
       );
       const data = await response.json();
 

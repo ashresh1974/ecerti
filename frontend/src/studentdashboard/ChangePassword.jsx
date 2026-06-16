@@ -19,7 +19,7 @@ function ChangePassword() {
     setMessage('');
 
     try {
-      await axios.put('http://localhost:5000/api/user/change-password', {
+      await axios.put('${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/user/change-password', {
         currentPassword,
         newPassword,
         confirmPassword,

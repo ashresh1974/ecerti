@@ -12,7 +12,7 @@ function QRVerificationLogs() {
 
   const fetchQRLogs = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/certificate/qr-logs', {
+      const response = await axios.get('${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/certificate/qr-logs', {
         withCredentials: true
       });
       setLogs(response.data || []);

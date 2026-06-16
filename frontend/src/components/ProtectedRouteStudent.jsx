@@ -17,7 +17,7 @@ const ProtectedRouteStudent = ({ children }) => {
 
       // Validate session with backend
       try {
-        const response = await fetch('http://localhost:5000/api/me', {
+        const response = await fetch('${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/me', {
           method: 'GET',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' }

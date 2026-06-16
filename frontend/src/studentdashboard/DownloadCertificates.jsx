@@ -11,7 +11,7 @@ function DownloadCertificates() {
 
   const fetchVerifiedCertificates = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/certificate/student', {
+      const response = await fetch('${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/certificate/student', {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -39,7 +39,7 @@ function DownloadCertificates() {
       return alert('Certificate PDF not available yet.');
     }
     // Open the PDF directly from the backend static folder
-    window.open(`http://localhost:5000/certificates/${cert.reference_num}.pdf`, '_blank');
+    window.open(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/certificates/${cert.reference_num}.pdf`, '_blank');
   };
 
   if (loading) {

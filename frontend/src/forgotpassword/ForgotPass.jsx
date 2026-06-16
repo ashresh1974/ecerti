@@ -37,7 +37,7 @@ function ForgotPass() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5000/api/forgot-password/send-otp', {
+      const response = await fetch('${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/forgot-password/send-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ function ForgotPass() {
     setError('');
     setMessage('');
     try {
-      const response = await fetch('http://localhost:5000/api/forgot-password/verify-otp', {
+      const response = await fetch('${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/forgot-password/verify-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ function ForgotPass() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5000/api/forgot-password/reset-password', {
+      const response = await fetch('${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/forgot-password/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

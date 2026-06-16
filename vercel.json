@@ -1,9 +1,39 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install && npm run build",
+  "buildCommand": "cd backend && npm install && cd ../frontend && npm install && npm run build",
   "outputDirectory": "frontend/build",
-  "env": {},
+  "env": {
+    "DB_HOST": "@db_host",
+    "DB_USER": "@db_user",
+    "DB_PASSWORD": "@db_password",
+    "DB_DATABASE": "@db_database",
+    "EMAIL_USER": "@email_user",
+    "EMAIL_PASS": "@email_pass",
+    "SESSION_SECRET": "@session_secret",
+    "FRONTEND_URL": "@frontend_url",
+    "NODE_ENV": "production"
+  },
   "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/src/server.js"
+    },
+    {
+      "src": "/certificates/(.*)",
+      "dest": "/backend/public/certificates/$1"
+    },
+    {
+      "src": "/templates/(.*)",
+      "dest": "/backend/public/templates/$1"
+    },
+    {
+      "src": "/qr-codes/(.*)",
+      "dest": "/backend/public/qr-codes/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/backend/public/assets/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "/index.html"

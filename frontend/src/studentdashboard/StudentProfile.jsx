@@ -28,7 +28,7 @@ function StudentProfile() {
   const handleSave = async () => {
     try {
       const userId = profile.id;
-      const response = await axios.put(`http://localhost:5000/api/user/update/${userId}`, editedProfile, { withCredentials: true });
+      const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/user/update/${userId}`, editedProfile, { withCredentials: true });
       if (response.status === 200) {
         setProfile(editedProfile);
         setEditMode(false);

@@ -15,7 +15,7 @@ function CertificateStatus() {
 
   const fetchCertificates = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/certificate/student', {
+      const response = await fetch('${process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"}/api/certificate/student', {
         method: 'GET',
         credentials: 'include',
         headers: {
